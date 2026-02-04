@@ -1,3 +1,19 @@
+/* header css  */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-in-out;
+}
+
+
+/* custom css */
 .heading-first{
   text-align: center;
   font-size: 24px;

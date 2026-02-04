@@ -12,6 +12,11 @@ import PersonalizedNamePencil from "@/pages/PersonalizedNamePencil"
 import CustomEngravedMetalPen from "@/pages/CustomEngravedMetalPen"
 import CustomizableFridgeMagnet from "@/pages/CustomizableFridgeMagnet"
 
+// admin pages
+import Dashboard from "@/pages/admin/Dashboard"
+import AddProduct from "@/pages/admin/AddProduct"
+import ProductList from "@/pages/admin/ProductList"
+
 
 function App() {
   return (
@@ -25,6 +30,11 @@ function App() {
         <Route path="/personalized-name-pencil" element={<PersonalizedNamePencil />} />
         <Route path="/customizable-fridge-magnet" element={<CustomizableFridgeMagnet />} />
         {/* <Route path="*" element={<NotFound />} /> */}
+
+        {/* admin pages */}
+        <Route path="/admin" element={<Dashboard />} />
+        <Route path="/admin/add-product" element={<AddProduct />} />
+        <Route path="/admin/products" element={<ProductList />} />
       </Routes>
 
       <Footer />
