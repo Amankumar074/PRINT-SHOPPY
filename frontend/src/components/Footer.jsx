@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   return (
     <footer className="bg-theme-color-1 text-white">
@@ -64,16 +66,49 @@ export default function Footer() {
       </div>
 
       {/* BOTTOM LINKS */}
-      <div className=" text-theme-color-1">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 py-10 px-4 text-white">
+      <div className="text-theme-color-1">
+  <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 py-10 px-4 text-white">
 
-          <FooterCol title="Company" items={["About Us", "T&C's", "Refer & Earn"]} />
-          <FooterCol title="Best Sellers" items={["Wall Photo Frames", "Photo Stands", "Mobile Cases", "Photo Mugs"]} />
-          <FooterCol title="Support" items={["Contact Us", "Track Order", "Return Order", "FAQ's"]} />
-          <FooterCol title="More Info" items={["My Account", "Order History", "Your Credits"]} />
+    <FooterCol
+      title="Company"
+      items={[
+        { label: "AboutUs", path: "/aboutus" },
+        { label: "T&C's", path: "/terms" },
+        { label: "Refer & Earn", path: "/ReferandEern" },
+      ]}
+    />
 
-        </div>
-      </div>
+    <FooterCol
+      title="Best Sellers"
+      items={[
+        { label: "Wall Photo Frames", path: "/products/frames" },
+        { label: "Photo Stands", path: "/products/stands" },
+        { label: "Mobile Cases", path: "/products/mobile-cases" },
+        { label: "Photo Mugs", path: "/products/mugs" },
+      ]}
+    />
+
+    <FooterCol
+      title="Support"
+      items={[
+        { label: "Contact Us", path: "/contact" },
+        { label: "Track Order", path: "/track-order" },
+        { label: "Return Order", path: "/return" },
+        { label: "FAQ's", path: "/faq" },
+      ]}
+    />
+
+    <FooterCol
+      title="More Info"
+      items={[
+        { label: "My Account", path: "/account" },
+        { label: "Order History", path: "/orders" },
+        { label: "Your Credits", path: "/credits" },
+      ]}
+    />
+
+  </div>
+</div>
 
     </footer>
   )
@@ -85,13 +120,19 @@ function FooterCol({ title, items }) {
       <h4 className="font-bold mb-4 border-b-2 border-theme-color-2 inline-block">
         {title}
       </h4>
+
       <ul className="space-y-2 text-sm">
-        {items.map((item) => (
-          <li key={item} className="hover:text-theme-color-4 cursor-pointer">
-            {item}
+        {items.map((item, index) => (
+          <li key={index} className="hover:text-theme-color-4">
+            <Link
+              to={item.path}
+              className="cursor-pointer transition"
+            >
+              {item.label}
+            </Link>
           </li>
         ))}
       </ul>
     </div>
-  )
+  );
 }

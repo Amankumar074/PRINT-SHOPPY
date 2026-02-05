@@ -16,6 +16,10 @@ import CustomizableFridgeMagnet from "@/pages/CustomizableFridgeMagnet"
 import Dashboard from "@/pages/admin/Dashboard"
 import AddProduct from "@/pages/admin/AddProduct"
 import ProductList from "@/pages/admin/ProductList"
+import AboutUs from './pages/AboutUs'
+import Terms from './pages/Terms'
+import ReferandEern from './pages/ReferandEern'
+import Contectus from './pages/Contectus'
 
 
 function App() {
@@ -28,13 +32,17 @@ function App() {
         <Route path="/mini-acrylic-photo-collage" element={<MiniAcrylicPhotoCollage />} />
         <Route path="/custom-engraved-metal-pen" element={<CustomEngravedMetalPen />} />
         <Route path="/personalized-name-pencil" element={<PersonalizedNamePencil />} />
-        <Route path="/customizable-fridge-magnet" element={<CustomizableFridgeMagnet />} />
+        <Route path="/aboutus" element={<AboutUs />} />
+        <Route path="/terms" element={<Terms/>} />
+        <Route path="/ReferandEern" element={<ReferandEern/>} />
+        <Route path="/contact" element={<Contectus/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
 
         {/* admin pages */}
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/admin/add-product" element={<AddProduct />} />
         <Route path="/admin/products" element={<ProductList />} />
+
       </Routes>
 
       <Footer />
