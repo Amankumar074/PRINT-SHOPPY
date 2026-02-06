@@ -15,11 +15,13 @@ import CustomizableFridgeMagnet from "@/pages/CustomizableFridgeMagnet"
 // admin pages
 import Dashboard from "@/pages/admin/Dashboard"
 import AddProduct from "@/pages/admin/AddProduct"
+import EditProduct from "@/pages/admin/EditProduct"
 import ProductList from "@/pages/admin/ProductList"
 import AboutUs from './pages/AboutUs'
 import Terms from './pages/Terms'
 import ReferandEern from './pages/ReferandEern'
 import Contectus from './pages/Contectus'
+import Categories from "@/pages/admin/Categories"
 
 
 function App() {
@@ -41,8 +43,10 @@ function App() {
         {/* admin pages */}
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/admin/add-product" element={<AddProduct />} />
+        <Route path="/admin/edit-product/:id" element={<EditProduct />} />
         <Route path="/admin/products" element={<ProductList />} />
 
+        <Route path="/admin/categories" element={<Categories />} />
       </Routes>
 
       <Footer />

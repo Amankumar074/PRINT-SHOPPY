@@ -1,14 +1,11 @@
-export default function ProductCard({ image, title, price }) {
+export default function ProductCard({ image, name, title, price }) {
   return (
     <div className=" rounded-xl p-4 hover:shadow-lg transition">
-      <img
-        src={image}
-        alt={title}
-        className="rounded-lg mb-3 w-full h-44 object-cover"
-      />
+      <img src={`http://localhost:5000/uploads/${image}`} 
+      className="h-32 w-44 rounded-lg"/>
 
       <h3 className="font-semibold text-sm md:text-base">
-        {title}
+        {name}
       </h3>
 
       {price && (

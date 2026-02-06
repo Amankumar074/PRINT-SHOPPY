@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const AddProduct = () => {
@@ -8,7 +8,17 @@ const AddProduct = () => {
     slug: "",
     category: ""
   });
+
+  const [categories, setCategories] = useState([]);
   const [image, setImage] = useState(null);
+
+  // 🔹 FETCH CATEGORIES
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/categories")
+      .then((res) => setCategories(res.data))
+      .catch((err) => console.error(err));
+  }, []);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -76,18 +86,28 @@ const AddProduct = () => {
           required
         />
 
-        {/* CATEGORY */}
-        <input
-          type="text"
-          placeholder="Category"
-          className="w-full border p-3 rounded mb-4"
-          onChange={(e) =>
-            setForm({ ...form, category: e.target.value })
-          }
-          required
-        />
+        {/* CATEGORY (DYNAMIC) */}
+        <select
+  className="w-full border p-3 rounded mb-4"
+  value={form.category}
+  onChange={(e) =>
+    setForm({ ...form, category: e.target.value })
+  }
+  required
+>
+  <option value="" disabled>
+    Select Category
+  </option>
 
-        {/* IMAGE (IMPORTANT PART) */}
+  {categories.map((cat) => (
+    <option key={cat._id} value={cat.name}>
+      {cat.name}
+    </option>
+  ))}
+</select>
+
+
+        {/* IMAGE */}
         <div className="mb-6">
           <label className="block mb-2 font-medium">
             Product Image

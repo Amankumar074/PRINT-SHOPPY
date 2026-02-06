@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
 
 const Dashboard = () => {
   return (
@@ -21,9 +21,18 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold mb-2">📦 Products</h2>
           <p className="text-gray-600">View all products</p>
         </Link>
+
+        {/* 🆕 CATEGORY */}
+        <Link
+          to="/admin/categories"
+          className="bg-white shadow rounded-xl p-6 hover:shadow-lg transition"
+        >
+          <h2 className="text-xl font-semibold mb-2">🗂 Categories</h2>
+          <p className="text-gray-600">Add / Edit / Sort categories</p>
+        </Link>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard
