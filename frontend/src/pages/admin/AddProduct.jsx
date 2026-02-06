@@ -30,10 +30,14 @@ const AddProduct = () => {
 
     const data = new FormData();
     data.append("name", form.name);
-    data.append("price", form.price);
+    // data.append("price", form.price);
     data.append("slug", form.slug);
     data.append("category", form.category);
     data.append("image", image);
+
+     if (form.price) {
+    data.append("price", form.price);
+  }
 
     await axios.post(
       "http://localhost:5000/api/products/create",
@@ -72,7 +76,7 @@ const AddProduct = () => {
           onChange={(e) =>
             setForm({ ...form, price: e.target.value })
           }
-          required
+
         />
 
         {/* SLUG */}
@@ -93,7 +97,6 @@ const AddProduct = () => {
   onChange={(e) =>
     setForm({ ...form, category: e.target.value })
   }
-  required
 >
   <option value="" disabled>
     Select Category
@@ -117,7 +120,7 @@ const AddProduct = () => {
             accept="image/*"
             className="w-full border p-2 rounded"
             onChange={(e) => setImage(e.target.files[0])}
-            required
+            
           />
         </div>
 
