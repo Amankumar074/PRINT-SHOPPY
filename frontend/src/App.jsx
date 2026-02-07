@@ -22,6 +22,9 @@ import Terms from './pages/Terms'
 import ReferandEern from './pages/ReferandEern'
 import Contectus from './pages/Contectus'
 import Categories from "@/pages/admin/Categories"
+import OrderHistory from './pages/OrderHistory'
+import Faq from './pages/Faq'
+import AccountPage from './pages/AccountPage'
 
 
 function App() {
@@ -38,6 +41,9 @@ function App() {
         <Route path="/terms" element={<Terms/>} />
         <Route path="/ReferandEern" element={<ReferandEern/>} />
         <Route path="/contact" element={<Contectus/>} />
+        <Route path="/orders" element={<OrderHistory/>} />
+        <Route path="/faq" element={<Faq/>} />
+        <Route path="/account" element={<AccountPage/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
 
         {/* admin pages */}
