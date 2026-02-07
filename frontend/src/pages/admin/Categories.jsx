@@ -11,7 +11,13 @@ export default function Categories() {
 
   // edit category
   const [editingId, setEditingId] = useState(null);
-  const [editName, setEditName] = useState("");
+  const [editData, setEditData] = useState({
+    name: "",
+    showSlider: false,
+    widthPercent: 100,
+    bgColor: "#ffffff",
+    imagesPerRow: 4,
+  });
 
   /* LOAD */
   const loadCategories = async () => {
@@ -39,19 +45,35 @@ export default function Categories() {
   /* EDIT */
   const startEdit = (cat) => {
     setEditingId(cat._id);
-    setEditName(cat.name);
-  };
-
-  const saveEdit = async (id) => {
-    if (!editName.trim()) return;
-
-    await axios.put(`http://localhost:5000/api/categories/${id}`, {
-      name: editName,
+    setEditData({
+      name: cat.name,
+      showSlider: cat.showSlider ?? false,
+      widthPercent: cat.widthPercent ?? 100,
+      bgColor: cat.bgColor ?? "#ffffff",
+      imagesPerRow: cat.imagesPerRow ?? 4,
     });
-
-    setEditingId(null);
-    loadCategories();
   };
+
+const saveEdit = async (id) => {
+  if (!editData.name.trim()) return;
+
+  const payload = {
+    name: editData.name,
+    showSlider: Boolean(editData.showSlider),
+    widthPercent: Number(editData.widthPercent) || 100,
+    bgColor: editData.bgColor || "#ffffff",
+    imagesPerRow: Number(editData.imagesPerRow) || 4,
+  };
+
+  await axios.put(
+    `http://localhost:5000/api/categories/${id}`,
+    payload
+  );
+
+  setEditingId(null);
+  loadCategories();
+};
+
 
   /* DELETE */
   const deleteCategory = async (id) => {
@@ -62,20 +84,20 @@ export default function Categories() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto">
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Categories</h2>
 
         <button
           onClick={() => setShowAdd(!showAdd)}
-          className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+          className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded"
         >
           <Plus size={16} /> Add Category
         </button>
       </div>
 
-      {/* ADD CATEGORY INPUT */}
+      {/* ADD CATEGORY */}
       {showAdd && (
         <div className="mb-4 flex gap-2 bg-white p-4 rounded shadow">
           <input
@@ -84,20 +106,15 @@ export default function Categories() {
             placeholder="Category name"
             className="border px-3 py-2 rounded w-full"
           />
-
           <button
             onClick={handleAddCategory}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            className="px-4 py-2 bg-green-600 text-white rounded"
           >
             Save
           </button>
-
           <button
-            onClick={() => {
-              setShowAdd(false);
-              setNewCategory("");
-            }}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            onClick={() => setShowAdd(false)}
+            className="px-4 py-2 bg-gray-300 rounded"
           >
             Cancel
           </button>
@@ -108,45 +125,138 @@ export default function Categories() {
       <table className="w-full bg-white rounded shadow">
         <thead>
           <tr className="bg-gray-100 text-left">
-            <th className="p-3">Category Name</th>
-            <th className="p-3 w-40">Actions</th>
+            <th className="p-3">Category</th>
+            <th className="p-3 w-48">Actions</th>
           </tr>
         </thead>
 
         <tbody>
           {categories.map((cat) => (
-            <tr key={cat._id} className="border-t">
-              {/* NAME */}
+            <tr key={cat._id} className="border-t align-top">
+              {/* NAME / EDIT PANEL */}
               <td className="p-3">
                 {editingId === cat._id ? (
-                  <input
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="border px-2 py-1 rounded w-full"
-                  />
+                  <div className="space-y-3">
+                    {/* Name */}
+                    <input
+                      value={editData.name}
+                      onChange={(e) =>
+                        setEditData({ ...editData, name: e.target.value })
+                      }
+                      className="border px-2 py-1 rounded w-full"
+                      placeholder="Category name"
+                    />
+
+                    {/* Slider */}
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={editData.showSlider}
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            showSlider: e.target.checked,
+                          })
+                        }
+                      />
+                      Show Slider
+                    </label>
+
+                    {/* Width */}
+                    <div>
+                      <label className="text-sm">Width (%)</label>
+                      <input
+                        type="number"
+                        min="10"
+                        max="100"
+                        value={editData.widthPercent}
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            widthPercent: Number(e.target.value),
+                          })
+                        }
+                        className="border px-2 py-1 rounded w-full"
+                      />
+                    </div>
+
+                    {/* Background */}
+                    <div>
+                      <label className="text-sm">Background Color</label>
+                      <input
+                        type="color"
+                        value={editData.bgColor}
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            bgColor: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    {/* Images per row */}
+                    <div>
+                      <label className="text-sm">
+                        Images per row <span className="text-xs text-gray-500">(any number)</span>
+                      </label>
+
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0.1"
+                        value={editData.imagesPerRow}
+                        onChange={(e) => {
+                          const val = e.target.value;
+
+                          setEditData({
+                            ...editData,
+                            imagesPerRow: val === "" ? "" : Number(val),
+                          });
+                        }}
+                        onBlur={() => {
+                          if (
+                            editData.imagesPerRow === "" ||
+                            isNaN(editData.imagesPerRow)
+                          ) {
+                            setEditData({
+                              ...editData,
+                              imagesPerRow: 4, 
+                            });
+                          }
+                        }}
+                        className="border px-2 py-1 rounded w-full"
+                      />
+
+                    </div>
+
+                  </div>
                 ) : (
-                  cat.name
+                  <div>
+                    <div className="font-medium">{cat.name}</div>
+                    <div className="text-xs text-gray-500">
+                      Slider: {cat.showSlider ? "Yes" : "No"} | Width:{" "}
+                      {cat.widthPercent ?? 100}% | Grid:{" "}
+                      {cat.imagesPerRow ?? 4}
+                    </div>
+                  </div>
                 )}
               </td>
 
               {/* ACTIONS */}
               <td className="p-3">
-                <div className="flex items-center gap-3">
-                  {/* EDIT / SAVE */}
+                <div className="flex gap-2">
                   {editingId === cat._id ? (
                     <>
                       <button
                         onClick={() => saveEdit(cat._id)}
-                        className="p-2 rounded-full bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
-                        title="Save"
+                        className="p-2 bg-green-100 text-green-600 rounded"
                       >
                         <Check size={16} />
                       </button>
-
                       <button
                         onClick={() => setEditingId(null)}
-                        className="p-2 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-600 hover:text-white"
-                        title="Cancel"
+                        className="p-2 bg-gray-200 rounded"
                       >
                         <X size={16} />
                       </button>
@@ -154,18 +264,15 @@ export default function Categories() {
                   ) : (
                     <button
                       onClick={() => startEdit(cat)}
-                      className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white"
-                      title="Edit"
+                      className="p-2 bg-blue-100 text-blue-600 rounded"
                     >
                       <Pencil size={16} />
                     </button>
                   )}
 
-                  {/* DELETE */}
                   <button
                     onClick={() => deleteCategory(cat._id)}
-                    className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
-                    title="Delete"
+                    className="p-2 bg-red-100 text-red-600 rounded"
                   >
                     <Trash2 size={16} />
                   </button>
