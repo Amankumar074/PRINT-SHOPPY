@@ -2,20 +2,6 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import axios from "axios"
 
-const categories = [
-  "POPULAR PRODUCTS",
-  "NEW IN",
-  "WALL DECORATIVES",
-  "DESK DECORATIVES",
-  "PHOTO ALBUMS & PRINTS",
-  "HOME DECORATIVES",
-  "CAR ACCESSORIES",
-  "FASHION & ACCESSORIES",
-  "KIDS ZONE",
-  "MOBILE ACCESSORIES",
-  "BUSINESS NEEDS",
-]
-
 const EditProduct = () => {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -27,11 +13,20 @@ const EditProduct = () => {
     category: "",
   })
 
+  const [categories, setCategories] = useState([])
   const [oldImage, setOldImage] = useState("")
   const [newImage, setNewImage] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // 🔹 Load product
+  // 🔹 FETCH CATEGORIES (DYNAMIC)
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/categories")
+      .then((res) => setCategories(res.data))
+      .catch((err) => console.log(err))
+  }, [])
+
+  // 🔹 LOAD PRODUCT
   useEffect(() => {
     axios.get("http://localhost:5000/api/products").then((res) => {
       const product = res.data.find((p) => p._id === id)
@@ -42,40 +37,39 @@ const EditProduct = () => {
       }
 
       setForm({
-        name: product.name,
-        price: product.price,
-        slug: product.slug,
-        category: product.category,
+        name: product.name || "",
+        price: product.price || "",
+        slug: product.slug || "",
+        category: product.category || "",
       })
+
       setOldImage(product.image)
       setLoading(false)
     })
   }, [id])
 
-  // 🔹 Update product
+  // 🔹 UPDATE PRODUCT
   const handleUpdate = async (e) => {
     e.preventDefault()
 
     const formData = new FormData()
-    formData.append("name", form.name)
-    formData.append("price", form.price)
-    formData.append("slug", form.slug)
-    formData.append("category", form.category)
 
-    if (newImage) {
-      formData.append("image", newImage)
-    }
+    if (form.name) formData.append("name", form.name)
+    if (form.price) formData.append("price", form.price)
+    if (form.slug) formData.append("slug", form.slug)
+    if (form.category) formData.append("category", form.category)
+    if (newImage) formData.append("image", newImage)
 
     try {
       await axios.put(
         `http://localhost:5000/api/products/${id}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        formData
       )
 
       alert("Product updated successfully")
       navigate("/admin/products")
     } catch (err) {
+      console.error(err)
       alert("Update failed")
     }
   }
@@ -88,63 +82,66 @@ const EditProduct = () => {
         <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
 
         <form onSubmit={handleUpdate} className="space-y-4">
-          {/* Name */}
+          {/* NAME */}
           <input
             className="w-full border p-3 rounded"
             placeholder="Product Name"
             value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            required
+            onChange={(e) =>
+              setForm({ ...form, name: e.target.value })
+            }
           />
 
-          {/* Price */}
+          {/* PRICE */}
           <input
             type="number"
             className="w-full border p-3 rounded"
             placeholder="Price"
             value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
-            required
+            onChange={(e) =>
+              setForm({ ...form, price: e.target.value })
+            }
           />
 
-          {/* Slug */}
+          {/* SLUG */}
           <input
             className="w-full border p-3 rounded"
             placeholder="Slug"
             value={form.slug}
-            onChange={(e) => setForm({ ...form, slug: e.target.value })}
-            required
+            onChange={(e) =>
+              setForm({ ...form, slug: e.target.value })
+            }
           />
 
-          {/* Category */}
+          {/* CATEGORY (DYNAMIC) */}
           <select
             className="w-full border p-3 rounded"
             value={form.category}
             onChange={(e) =>
               setForm({ ...form, category: e.target.value })
             }
-            required
           >
             <option value="">Select Category</option>
             {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+              <option key={cat._id} value={cat.name}>
+                {cat.name}
               </option>
             ))}
           </select>
 
-          {/* Old Image */}
+          {/* OLD IMAGE */}
           {oldImage && (
             <div>
               <p className="text-sm mb-1">Current Image</p>
               <img
                 src={`http://localhost:5000/uploads/${oldImage}`}
                 className="h-20 w-24 rounded border"
+                alt=""
               />
             </div>
           )}
 
-          {/* New Image */}
+          {/* NEW IMAGE */}
           <input
             type="file"
             accept="image/*"
@@ -153,7 +150,7 @@ const EditProduct = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700"
+            className="w-full bg-black text-white py-3 rounded hover:bg-gray-800"
           >
             Update Product
           </button>

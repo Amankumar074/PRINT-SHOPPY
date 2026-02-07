@@ -1,6 +1,8 @@
 import express from "express"
 import multer from "multer"
 import Product from "../models/Product.js"
+import fs from "fs"
+import path from "path"
 
 const router = express.Router()
 
@@ -28,7 +30,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 1 * 1024 * 1024 } // 1MB
+  limits: { fileSize: 1 * 1024 * 1024 }
 })
 
 // ================= CREATE PRODUCT =================
@@ -58,36 +60,56 @@ router.get("/", async (req, res) => {
   res.json(products)
 })
 
-// ================= DELETE PRODUCT =================
+// ================= DELETE PRODUCT (IMAGE ALSO DELETE) =================
 router.delete("/:id", async (req, res) => {
   try {
+    const product = await Product.findById(req.params.id)
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" })
+    }
+
+    // 🔥 delete image file
+    if (product.image) {
+      const imagePath = path.join("uploads", product.image)
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath)
+      }
+    }
+
     await Product.findByIdAndDelete(req.params.id)
+
     res.json({ message: "Product deleted successfully" })
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 })
 
-// ================= UPDATE PRODUCT =================
+// ================= UPDATE PRODUCT (OLD IMAGE DELETE) =================
 router.put("/:id", upload.single("image"), async (req, res) => {
   try {
-    const updateData = {
-      name: req.body.name,
-      price: req.body.price,
-      slug: req.body.slug,
-      category: req.body.category,
+    const product = await Product.findById(req.params.id)
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" })
     }
 
-    // agar new image aayi hai
-    if (req.file) {
-      updateData.image = req.file.filename
+    // 🔥 agar new image aayi → old image delete
+    if (req.file && product.image) {
+      const oldImagePath = path.join("uploads", product.image)
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath)
+      }
+      product.image = req.file.filename
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    )
+    // 🔹 update only provided fields
+    if (req.body.name) product.name = req.body.name
+    if (req.body.price) product.price = req.body.price
+    if (req.body.slug) product.slug = req.body.slug
+    if (req.body.category) product.category = req.body.category
+
+    const updatedProduct = await product.save()
 
     res.json(updatedProduct)
   } catch (err) {
