@@ -8,62 +8,90 @@ const EditProduct = () => {
 
   const [form, setForm] = useState({
     name: "",
-    price: "",
+    subtitle: "",
     slug: "",
+    price: "",
+    oldPrice: "",
     category: "",
+    pricingSlabs: [],
+    options: [],
+    details: [],
+    trust: [],
+    personalizationEnabled: true
   })
 
   const [categories, setCategories] = useState([])
-  const [oldImage, setOldImage] = useState("")
-  const [newImage, setNewImage] = useState(null)
+  const [images, setImages] = useState([])        // existing images
+  const [newImages, setNewImages] = useState([])  // newly selected images
   const [loading, setLoading] = useState(true)
 
-  // 🔹 FETCH CATEGORIES (DYNAMIC)
+  // 🔹 FETCH CATEGORIES
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/categories")
-      .then((res) => setCategories(res.data))
-      .catch((err) => console.log(err))
+      .then(res => setCategories(res.data))
+      .catch(err => console.error(err))
   }, [])
 
-  // 🔹 LOAD PRODUCT
+  // 🔹 LOAD PRODUCT DATA
   useEffect(() => {
-    axios.get("http://localhost:5000/api/products").then((res) => {
-      const product = res.data.find((p) => p._id === id)
+    axios.get("http://localhost:5000/api/products")
+      .then(res => {
+        const product = res.data.find(p => p._id === id)
 
-      if (!product) {
-        alert("Product not found")
-        return
-      }
+        if (!product) {
+          alert("Product not found")
+          return
+        }
 
-      setForm({
-        name: product.name || "",
-        price: product.price || "",
-        slug: product.slug || "",
-        category: product.category || "",
+        setForm({
+          name: product.name || "",
+          subtitle: product.subtitle || "",
+          slug: product.slug || "",
+          price: product.price || "",
+          oldPrice: product.oldPrice || "",
+          category: product.category || "",
+          pricingSlabs: product.pricingSlabs || [],
+          options: product.options || [],
+          details: product.details || [],
+          trust: product.trust || [],
+          personalizationEnabled: product.personalizationEnabled ?? true
+        })
+
+        setImages(product.images || [])
+        setLoading(false)
       })
-
-      setOldImage(product.image)
-      setLoading(false)
-    })
+      .catch(err => {
+        console.error(err)
+        alert("Failed to load product")
+      })
   }, [id])
 
   // 🔹 UPDATE PRODUCT
   const handleUpdate = async (e) => {
     e.preventDefault()
 
-    const formData = new FormData()
+    const data = new FormData()
 
-    if (form.name) formData.append("name", form.name)
-    if (form.price) formData.append("price", form.price)
-    if (form.slug) formData.append("slug", form.slug)
-    if (form.category) formData.append("category", form.category)
-    if (newImage) formData.append("image", newImage)
+    data.append("name", form.name)
+    data.append("subtitle", form.subtitle)
+    data.append("slug", form.slug)
+    data.append("price", form.price)
+    data.append("oldPrice", form.oldPrice)
+    data.append("category", form.category)
+
+    data.append("pricingSlabs", JSON.stringify(form.pricingSlabs))
+    data.append("options", JSON.stringify(form.options))
+    data.append("details", JSON.stringify(form.details))
+    data.append("trust", JSON.stringify(form.trust))
+    data.append("personalizationEnabled", form.personalizationEnabled)
+
+    newImages.forEach(img => data.append("images", img))
 
     try {
       await axios.put(
         `http://localhost:5000/api/products/${id}`,
-        formData
+        data
       )
 
       alert("Product updated successfully")
@@ -74,14 +102,19 @@ const EditProduct = () => {
     }
   }
 
-  if (loading) return <p className="p-6">Loading...</p>
+  if (loading) {
+    return <p className="p-6 text-center">Loading...</p>
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
-        <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
+      <div className="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow">
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Edit Product
+        </h2>
 
         <form onSubmit={handleUpdate} className="space-y-4">
+
           {/* NAME */}
           <input
             className="w-full border p-3 rounded"
@@ -89,6 +122,28 @@ const EditProduct = () => {
             value={form.name}
             onChange={(e) =>
               setForm({ ...form, name: e.target.value })
+            }
+            required
+          />
+
+          {/* SUBTITLE */}
+          <input
+            className="w-full border p-3 rounded"
+            placeholder="Subtitle"
+            value={form.subtitle}
+            onChange={(e) =>
+              setForm({ ...form, subtitle: e.target.value })
+            }
+          />
+
+          {/* OLD PRICE */}
+          <input
+            type="number"
+            className="w-full border p-3 rounded"
+            placeholder="Old Price (MRP)"
+            value={form.oldPrice}
+            onChange={(e) =>
+              setForm({ ...form, oldPrice: e.target.value })
             }
           />
 
@@ -111,9 +166,10 @@ const EditProduct = () => {
             onChange={(e) =>
               setForm({ ...form, slug: e.target.value })
             }
+            required
           />
 
-          {/* CATEGORY (DYNAMIC) */}
+          {/* CATEGORY */}
           <select
             className="w-full border p-3 rounded"
             value={form.category}
@@ -122,35 +178,61 @@ const EditProduct = () => {
             }
           >
             <option value="">Select Category</option>
-            {categories.map((cat) => (
+            {categories.map(cat => (
               <option key={cat._id} value={cat.name}>
                 {cat.name}
               </option>
             ))}
           </select>
 
-          {/* OLD IMAGE */}
-          {oldImage && (
+          {/* EXISTING IMAGES */}
+          {images.length > 0 && (
             <div>
-              <p className="text-sm mb-1">Current Image</p>
-              <img
-                src={`http://localhost:5000/uploads/${oldImage}`}
-                className="h-20 w-24 rounded border"
-                alt=""
-              />
+              <p className="text-sm font-medium mb-2">
+                Current Images
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {images.map((img, i) => (
+                  <img
+                    key={i}
+                    src={`http://localhost:5000/uploads/${img}`}
+                    className="h-20 w-20 object-cover rounded border"
+                    alt=""
+                  />
+                ))}
+              </div>
             </div>
           )}
 
-          {/* NEW IMAGE */}
+          {/* NEW IMAGES */}
           <input
             type="file"
+            multiple
             accept="image/*"
-            onChange={(e) => setNewImage(e.target.files[0])}
+            className="w-full border p-2 rounded"
+            onChange={(e) =>
+              setNewImages([...e.target.files])
+            }
           />
+
+          {/* PERSONALIZATION TOGGLE */}
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={form.personalizationEnabled}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  personalizationEnabled: e.target.checked
+                })
+              }
+            />
+            Enable Personalization
+          </label>
 
           <button
             type="submit"
-            className="w-full bg-black text-white py-3 rounded hover:bg-gray-800"
+            className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800"
           >
             Update Product
           </button>

@@ -4,13 +4,22 @@ import axios from "axios";
 const AddProduct = () => {
   const [form, setForm] = useState({
     name: "",
-    price: "",
+    subtitle: "",
     slug: "",
-    category: ""
-  });
+    price: "",
+    oldPrice: "",
+    category: "",
+    pricingSlabs: [],
+    options: [],
+    details: [],
+    trust: [],
+    personalizationEnabled: true
+  })
+
+  const [images, setImages] = useState([])
+
 
   const [categories, setCategories] = useState([]);
-  const [image, setImage] = useState(null);
 
   // 🔹 FETCH CATEGORIES
   useEffect(() => {
@@ -23,21 +32,29 @@ const AddProduct = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (!image) {
-      alert("Please select image");
+    if (images.length === 0) {
+      alert("Please select at least one image");
       return;
     }
 
-    const data = new FormData();
-    data.append("name", form.name);
-    // data.append("price", form.price);
-    data.append("slug", form.slug);
-    data.append("category", form.category);
-    data.append("image", image);
+    const data = new FormData()
 
-     if (form.price) {
-    data.append("price", form.price);
-  }
+    data.append("name", form.name)
+    data.append("subtitle", form.subtitle)
+    data.append("slug", form.slug)
+    data.append("price", form.price)
+    data.append("oldPrice", form.oldPrice)
+    data.append("category", form.category)
+
+    images.forEach(img => data.append("images", img))
+
+    data.append("pricingSlabs", JSON.stringify(form.pricingSlabs))
+    data.append("options", JSON.stringify(form.options))
+    data.append("details", JSON.stringify(form.details))
+    data.append("trust", JSON.stringify(form.trust))
+    data.append("personalizationEnabled", form.personalizationEnabled)
+
+
 
     await axios.post(
       "http://localhost:5000/api/products/create",
@@ -67,6 +84,22 @@ const AddProduct = () => {
           }
           required
         />
+        <input
+          placeholder="Subtitle"
+          className="w-full border p-3 rounded mb-4"
+          onChange={(e) =>
+            setForm({ ...form, subtitle: e.target.value })
+          }
+        />
+
+        <input
+          type="number"
+          placeholder="Old Price (MRP)"
+          className="w-full border p-3 rounded mb-4"
+          onChange={(e) =>
+            setForm({ ...form, oldPrice: e.target.value })
+          }
+        />
 
         {/* PRICE */}
         <input
@@ -90,39 +123,35 @@ const AddProduct = () => {
           required
         />
 
+
         {/* CATEGORY (DYNAMIC) */}
         <select
-  className="w-full border p-3 rounded mb-4"
-  value={form.category}
-  onChange={(e) =>
-    setForm({ ...form, category: e.target.value })
-  }
->
-  <option value="" disabled>
-    Select Category
-  </option>
+          className="w-full border p-3 rounded mb-4"
+          value={form.category}
+          onChange={(e) =>
+            setForm({ ...form, category: e.target.value })
+          }
+        >
+          <option value="" disabled>
+            Select Category
+          </option>
 
-  {categories.map((cat) => (
-    <option key={cat._id} value={cat.name}>
-      {cat.name}
-    </option>
-  ))}
-</select>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat.name}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
 
 
         {/* IMAGE */}
-        <div className="mb-6">
-          <label className="block mb-2 font-medium">
-            Product Image
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            className="w-full border p-2 rounded"
-            onChange={(e) => setImage(e.target.files[0])}
-            
-          />
-        </div>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          className="w-full border p-2 rounded mb-6"
+          onChange={(e) => setImages([...e.target.files])}
+        />
 
         <button
           type="submit"

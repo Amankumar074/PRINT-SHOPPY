@@ -10,7 +10,7 @@ import ScrollToTop from "@/components/ScrollToTop"
 
 import MiniAcrylicPhotoCollage from "@/pages/MiniAcrylicPhotoCollage"
 import PersonalizedNamePencil from "@/pages/PersonalizedNamePencil"
-import CustomEngravedMetalPen from "@/pages/CustomEngravedMetalPen"
+import ProductDetail from "@/pages/ProductDetail"
 import CustomizableFridgeMagnet from "@/pages/CustomizableFridgeMagnet"
 
 // admin pages
@@ -37,8 +37,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/mini-acrylic-photo-collage" element={<MiniAcrylicPhotoCollage />} />
-        <Route path="/custom-engraved-metal-pen" element={<CustomEngravedMetalPen />} />
+        <Route path="/product/:slug" element={<ProductDetail />} />
         <Route path="/personalized-name-pencil" element={<PersonalizedNamePencil />} />
+        <Route path="/customizable-fridge-magnet" element={<CustomizableFridgeMagnet />} />
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/terms" element={<Terms/>} />
         <Route path="/ReferandEern" element={<ReferandEern/>} />

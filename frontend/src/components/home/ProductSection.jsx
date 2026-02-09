@@ -51,7 +51,7 @@ export default function ProductSection({ category, products }) {
             {products.map((item) => (
               <SwiperSlide key={item._id}>
                 {item.slug ? (
-                  <Link to={`/${item.slug}`}>
+                  <Link to={`/product/${item.slug}`}>
                     <ProductCard {...item} />
                   </Link>
                 ) : (
@@ -70,7 +70,7 @@ export default function ProductSection({ category, products }) {
           >
             {products.map((item) =>
               item.slug ? (
-                <Link key={item._id} to={`/${item.slug}`}>
+                <Link key={item._id} to={`/product/${item.slug}`}>
                   <ProductCard {...item} />
                 </Link>
               ) : (
