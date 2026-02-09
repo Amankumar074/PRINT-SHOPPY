@@ -6,6 +6,7 @@ import Footer from "@/components/Footer"
 // import NotFound from "@/pages/NotFound"
 
 import Home from "@/pages/Home"
+import ScrollToTop from "@/components/ScrollToTop"
 
 import MiniAcrylicPhotoCollage from "@/pages/MiniAcrylicPhotoCollage"
 import PersonalizedNamePencil from "@/pages/PersonalizedNamePencil"
@@ -29,7 +30,8 @@ import AccountPage from './pages/AccountPage'
 
 function App() {
   return (
-    <div className="min-h-screen">
+    <>
+       <ScrollToTop />
       <Header />
 
       <Routes>
@@ -56,7 +58,7 @@ function App() {
       </Routes>
 
       <Footer />
-    </div>
+    </>
   )
 }
 
