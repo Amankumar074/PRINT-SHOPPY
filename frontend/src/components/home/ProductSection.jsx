@@ -22,7 +22,7 @@ export default function ProductSection({ category, products }) {
 
   return (
     <section
-      className="p-8 mx-auto mb-6"
+      className="p-1 lg:p-8  mx-auto mb-6"
       style={{
         backgroundColor: bgColor,
         width: `${widthPercent}%`,
@@ -63,7 +63,7 @@ export default function ProductSection({ category, products }) {
         ) : (
           /* 🔹 GRID MODE */
           <div
-            className="grid gap-6"
+            className="grid gap-2"
             style={{
               gridTemplateColumns: `repeat(auto-fill, minmax(${100 / imagesPerRow}%, 1fr))`,
             }}

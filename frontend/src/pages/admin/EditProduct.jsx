@@ -192,14 +192,36 @@ const EditProduct = () => {
                 Current Images
               </p>
               <div className="flex flex-wrap gap-3">
-                {images.map((img, i) => (
-                  <img
-                    key={i}
-                    src={`http://localhost:5000/uploads/${img}`}
-                    className="h-20 w-20 object-cover rounded border"
-                    alt=""
-                  />
-                ))}
+                <div className="flex flex-wrap gap-3">
+                  {images.map((img, i) => (
+                    <div key={i} className="relative">
+                      <img
+                        src={`http://localhost:5000/uploads/${img}`}
+                        className="h-20 w-20 object-cover rounded border"
+                        alt=""
+                      />
+
+                      {/* DELETE BUTTON */}
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (!window.confirm("Delete this image?")) return
+
+                          await axios.delete(
+                            `http://localhost:5000/api/products/${id}/image/${img}`
+                          )
+
+                          // UI update
+                          setImages(prev => prev.filter(i => i !== img))
+                        }}
+                        className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
               </div>
             </div>
           )}

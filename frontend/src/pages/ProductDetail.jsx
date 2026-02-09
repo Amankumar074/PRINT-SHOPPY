@@ -6,12 +6,15 @@ export default function ProductDetail() {
   const { slug } = useParams()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [activeImage, setActiveImage] = useState("")
 
   useEffect(() => {
-    axios
      axios.get(`http://localhost:5000/api/products/slug/${slug}`)
       .then(res => {
         setProduct(res.data)
+          if (res.data.images && res.data.images.length > 0) {
+          setActiveImage(res.data.images[0])
+        }
         setLoading(false)
       })
       .catch(() => {
@@ -23,28 +26,39 @@ export default function ProductDetail() {
   if (!product) return <p className="p-10 text-center">Product not found</p>
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-14">
+    <div className="max-w-[1400px] mx-auto w-full xl:w-10/12 py-14">
 
       {/* ================= HERO ================= */}
       <section className="grid lg:grid-cols-2 gap-16 mb-24">
 
         {/* IMAGE GALLERY */}
         <div>
-          <img
-            src={`http://localhost:5000/uploads/${product.images[0]}`}
-            className="rounded-3xl mb-6 shadow-lg"
-          />
+      {/* 🔥 MAIN IMAGE */}
+      <img
+        src={`http://localhost:5000/uploads/${activeImage}`}
+        className="rounded-3xl mb-6 shadow-lg w-full"
+        alt="Product"
+      />
 
-          <div className="flex gap-4">
-            {product.images.slice(1).map((img, i) => (
-              <img
-                key={i}
-                src={`http://localhost:5000/uploads/${img}`}
-                className="w-24 h-24 object-cover rounded-xl border hover:scale-105 transition"
-              />
-            ))}
-          </div>
-        </div>
+      {/* 🔹 THUMBNAILS */}
+      <div className="flex gap-4">
+        {product.images?.map((img, i) => (
+          <img
+            key={i}
+            src={`http://localhost:5000/uploads/${img}`}
+            onClick={() => setActiveImage(img)}
+            className={`w-24 h-24 object-cover rounded-xl border cursor-pointer
+              ${
+                activeImage === img
+                  ? "border-orange-500 ring-2 ring-orange-400"
+                  : "hover:scale-105 transition"
+              }
+            `}
+            alt=""
+          />
+        ))}
+      </div>
+    </div>
 
         {/* PRODUCT INFO */}
         <div>
