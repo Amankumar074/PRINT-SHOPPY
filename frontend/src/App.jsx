@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom"
 
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
-// import NotFound from "@/pages/NotFound"
+import NotFound from "@/pages/NotFound"
 
 import Home from "@/pages/Home"
 import ScrollToTop from "@/components/ScrollToTop"
@@ -46,7 +46,7 @@ function App() {
         <Route path="/orders" element={<OrderHistory/>} />
         <Route path="/faq" element={<Faq/>} />
         <Route path="/account" element={<AccountPage/>} />
-        {/* <Route path="*" element={<NotFound />} /> */}
+        <Route path="*" element={<NotFound />} />
 
         {/* admin pages */}
         <Route path="/admin" element={<Dashboard />} />

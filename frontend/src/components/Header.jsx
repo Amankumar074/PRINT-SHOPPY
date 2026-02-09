@@ -42,7 +42,9 @@ export default function Header() {
             <Link to="/">Track Order</Link>
           </div>
 
-          <img src="/logo.svg" alt="logo" className="h-8" />
+          <Link to="/">
+            <img src="/logo.svg" alt="logo" className="h-8" />
+          </Link>
 
           <nav className="hidden md:flex items-center gap-6">
             <button>Login</button>
