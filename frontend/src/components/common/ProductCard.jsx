@@ -10,7 +10,7 @@ export default function ProductCard({ images, name, title, price }) {
 
       {price && (
         <p className="text-theme-color-2 font-semibold text-sm mt-1">
-          {price}
+         ₹ {price}
         </p>
       )}
     </div>
