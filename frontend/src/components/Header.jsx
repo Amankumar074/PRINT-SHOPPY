@@ -37,9 +37,9 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
 
           <div className="flex text-sm">
-            <Link to="/" className="pr-4">Contact Us</Link>
-            <Link to="/" className="pr-4">FAQ's</Link>
-            <Link to="/">Track Order</Link>
+            <Link to="/contact" className="pr-4">Contact Us</Link>
+            <Link to="/faq" className="pr-4">FAQ's</Link>
+            <Link to="/orders">Track Order</Link>
           </div>
 
           <Link to="/">
@@ -47,8 +47,8 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
-            <button>Login</button>
-            <button className="border px-4 py-1 rounded">Register</button>
+           <Link to="/LoginRegister"> <button>Login</button></Link>
+           <Link to="/LoginRegister"><button className="border px-4 py-1 rounded">Register</button></Link> 
             <ShoppingCart className="w-6 h-6" />
           </nav>
 

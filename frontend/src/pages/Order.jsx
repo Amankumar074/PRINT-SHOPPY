@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function OrderHistory() {
+export default function Order() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 

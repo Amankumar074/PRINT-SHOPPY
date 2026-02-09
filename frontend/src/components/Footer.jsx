@@ -92,8 +92,8 @@ export default function Footer() {
       title="Support"
       items={[
         { label: "Contact Us", path: "/contact" },
-        { label: "Track Order", path: "/track-order" },
-        { label: "Return Order", path: "/return" },
+        { label: "Track Order", path: "/orders" },
+        { label: "Return Order", path: "/orders" },
         { label: "FAQ's", path: "/faq" },
       ]}
     />
