@@ -37,7 +37,7 @@ export default function ProductSection({ category, products }) {
           <Swiper
             modules={[Navigation, Autoplay]}
             navigation = {false}
-            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            autoplay={false}
             spaceBetween={24}
             infinite={true}
             slidesPerView={imagesPerRow}
