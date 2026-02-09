@@ -23,7 +23,7 @@ export default function ProductDetail() {
   if (!product) return <p className="p-10 text-center">Product not found</p>
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-14">
+    <div className="max-w-[1400px] mx-auto w-full xl:w-10/12 py-14">
 
       {/* ================= HERO ================= */}
       <section className="grid lg:grid-cols-2 gap-16 mb-24">
@@ -32,7 +32,7 @@ export default function ProductDetail() {
         <div>
           <img
             src={`http://localhost:5000/uploads/${product.images[0]}`}
-            className="rounded-3xl mb-6 shadow-lg"
+            className="rounded-3xl mb-6 shadow-lg w-full"
           />
 
           <div className="flex gap-4">

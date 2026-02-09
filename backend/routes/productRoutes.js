@@ -83,6 +83,33 @@ router.get("/", async (req, res) => {
   const products = await Product.find()
   res.json(products)
 })
+router.delete("/:id/image/:imageName", async (req, res) => {
+  try {
+    const id = req.params.id
+    const imageName = decodeURIComponent(req.params.imageName)
+
+    const product = await Product.findById(id)
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" })
+    }
+
+    product.images = product.images.filter(img => img !== imageName)
+
+    const imagePath = path.join("uploads", imageName)
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath)
+    }
+
+    await product.save()
+
+    res.json({
+      message: "Image deleted successfully",
+      images: product.images
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
 
 // ================= DELETE PRODUCT =================
 router.delete("/:id", async (req, res) => {
@@ -108,6 +135,7 @@ router.delete("/:id", async (req, res) => {
 })
 
 // ================= UPDATE PRODUCT =================
+// ================= UPDATE PRODUCT =================
 router.put("/:id", upload.array("images", 6), async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
@@ -116,14 +144,12 @@ router.put("/:id", upload.array("images", 6), async (req, res) => {
       return res.status(404).json({ message: "Product not found" })
     }
 
+    // ✅ ADD new images (DO NOT DELETE OLD)
     if (req.files && req.files.length > 0) {
-      if (product.images) {
-        product.images.forEach(img => {
-          const oldPath = path.join("uploads", img)
-          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath)
-        })
-      }
-      product.images = req.files.map(file => file.filename)
+      product.images = [
+        ...(product.images || []),
+        ...req.files.map(file => file.filename)
+      ]
     }
 
     if (req.body.name) product.name = req.body.name
@@ -137,5 +163,6 @@ router.put("/:id", upload.array("images", 6), async (req, res) => {
     res.status(500).json({ message: err.message })
   }
 })
+
 
 export default router

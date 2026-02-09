@@ -58,7 +58,7 @@ const ProductList = () => {
                 <td className="p-3">{p.category}</td>
                 <td className="p-3">
                   <img
-                    src={`http://localhost:5000/uploads/${p.images}`}
+                    src={`http://localhost:5000/uploads/${p.images[0]}`}
                     className="h-10 w-10 rounded object-cover"
                   />
                 </td>
