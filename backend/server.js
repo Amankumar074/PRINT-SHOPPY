@@ -6,6 +6,8 @@ import { fileURLToPath } from "url"
 
 import productRoutes from "./routes/productRoutes.js"
 import categoryRoutes from "./routes/categoryRoutes.js"
+import faqRoutes from "./routes/faqRoutes.js"
+
 
 const app = express()
 
@@ -18,6 +20,8 @@ app.use(express.json())
 
 // ✅ uploads folder ko public banana (IMPORTANT)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+
+app.use("/api/faqs", faqRoutes)
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/mernshop")
