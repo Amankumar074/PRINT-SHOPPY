@@ -47,8 +47,8 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
-           <Link to="/LoginRegister"> <button>Login</button></Link>
-           <Link to="/LoginRegister"><button className="border px-4 py-1 rounded">Register</button></Link> 
+           <Link to="/login"> <button>Login</button></Link>
+           <Link to="/register"><button className="border px-4 py-1 rounded">Register</button></Link> 
             <ShoppingCart className="w-6 h-6" />
           </nav>
 

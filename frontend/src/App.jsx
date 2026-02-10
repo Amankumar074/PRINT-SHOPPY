@@ -13,23 +13,24 @@ import PersonalizedNamePencil from "@/pages/PersonalizedNamePencil"
 import ProductDetail from "@/pages/ProductDetail"
 import CustomizableFridgeMagnet from "@/pages/CustomizableFridgeMagnet"
 
+import Register from '@/pages/commonpage/Register'
+import Login from '@/pages/commonpage/Login'
+
 // admin pages
 import Dashboard from "@/pages/admin/Dashboard"
 import AddProduct from "@/pages/admin/AddProduct"
 import EditProduct from "@/pages/admin/EditProduct"
 import ProductList from "@/pages/admin/ProductList"
 import AdminFaq from "@/pages/admin/AdminFaq"
-import AboutUs from './pages/AboutUs'
-import Terms from './pages/Terms'
-import ReferandEern from './pages/ReferandEern'
-import Contectus from './pages/Contectus'
+import AboutUs from '@/pages/AboutUs'
+import Terms from '@/pages/Terms'
+import ReferandEern from '@/pages/ReferandEern'
+import Contectus from '@/pages/Contectus'
 import Categories from "@/pages/admin/Categories"
-import Faq from './pages/Faq'
-import AccountPage from './pages/AccountPage'
-import Transactions from './pages/Transactions'
-import Order from './pages/Order'
-import Login from './pages/commonpage/LoginRegister'
-import LoginRegister from './pages/commonpage/LoginRegister'
+import Faq from '@/pages/Faq'
+import AccountPage from '@/pages/AccountPage'
+import Transactions from '@/pages/Transactions'
+import Order from '@/pages/Order'
 
 
 function App() {
@@ -51,7 +52,8 @@ function App() {
         <Route path="/orders" element={<Order/>} />
         <Route path="/faq" element={<Faq/>} />
         <Route path="/account" element={<AccountPage/>} />
-        <Route path="/LoginRegister" element={<LoginRegister/>} />
+        <Route path="/login" element={<Login/>} />
+        <Route path="/register" element={<Register/>} />
         <Route path="/credits" element={<Transactions/>} />
         <Route path="*" element={<NotFound />} />
 

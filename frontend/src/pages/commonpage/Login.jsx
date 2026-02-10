@@ -1,13 +1,13 @@
 import React from "react";
 
-export default function LoginRegister() {
+export default function Login() {
   return (
     <div className="min-h-screen bg-white px-4 py-10">
       
       {/* Login Box */}
       <div className="max-w-md mx-auto border border-teal-400 rounded-2xl bg-[#f2fbfb] p-8">
         <h2 className="text-center text-lg font-medium mb-4">
-          LOGIN/REGISTER
+          LOGIN
         </h2>
 
         <hr className="mb-6" />
@@ -19,7 +19,7 @@ export default function LoginRegister() {
         <div className="flex border bg-white">
           <div className="px-3 py-2 border-r text-sm">+91</div>
           <input
-            type="text"
+            type="number"
             placeholder="enter your mobile number"
             className="flex-1 px-3 py-2 text-sm outline-none"
           />
