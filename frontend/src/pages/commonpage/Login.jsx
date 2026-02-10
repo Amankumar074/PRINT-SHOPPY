@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   return (
@@ -47,6 +48,15 @@ export default function Login() {
         <button className="w-full bg-blue-500 text-white mt-6 py-3 text-sm rounded">
           SEND OTP
         </button>
+
+        <p className="text-center text-sm text-gray-600 mt-6">
+         Don’t have an account?{" "}
+         <Link to="/register">
+          <span className="text-blue-500 cursor-pointer font-medium">
+            Register
+          </span>
+          </Link>
+        </p>
       </div>
      
     </div>
