@@ -31,15 +31,14 @@ export default function ProductSection({ category, products }) {
     >
       <h2 className="heading-first mb-6 text-center">{name}</h2>
 
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-1">
         {/* 🔥 SLIDER MODE */}
         {showSlider ? (
           <Swiper
             modules={[Navigation, Autoplay]}
             navigation = {false}
             autoplay={false}
-            spaceBetween={24}
-            infinite={true}
+            spaceBetween={1}
             slidesPerView={imagesPerRow}
             breakpoints={{
               320: { slidesPerView: 2.8 },
@@ -63,7 +62,7 @@ export default function ProductSection({ category, products }) {
         ) : (
           /* 🔹 GRID MODE */
           <div
-  className="grid gap-2"
+  className="grid"
   style={{
     gridTemplateColumns:
       window.innerWidth < 640
