@@ -9,6 +9,7 @@ export default function ProductDetail() {
   const [activeImage, setActiveImage] = useState("")
 
   useEffect(() => {
+
      axios.get(`http://localhost:5000/api/products/slug/${slug}`)
       .then(res => {
         setProduct(res.data)

@@ -18,8 +18,8 @@ const Dashboard = () => {
           to="/admin/products"
           className="bg-white shadow rounded-xl p-6 hover:shadow-lg transition"
         >
-          <h2 className="text-xl font-semibold mb-2">📦 Products</h2>
-          <p className="text-gray-600">View all products</p>
+          <h2 className="text-xl font-semibold mb-2">📦All Products</h2>
+          <p className="text-gray-600">View and manage all products</p>
         </Link>
 
         {/* 🆕 CATEGORY */}
@@ -27,8 +27,15 @@ const Dashboard = () => {
           to="/admin/categories"
           className="bg-white shadow rounded-xl p-6 hover:shadow-lg transition"
         >
-          <h2 className="text-xl font-semibold mb-2">🗂 Categories</h2>
+          <h2 className="text-xl font-semibold mb-2">🗂All Categories</h2>
           <p className="text-gray-600">Add / Edit / Sort categories</p>
+        </Link>
+        <Link
+          to="/admin/faqs"
+          className="bg-white shadow rounded-xl p-6 hover:shadow-lg transition"
+        >
+          <h2 className="text-xl font-semibold mb-2">❓ FAQs</h2>
+          <p className="text-gray-600">Manage frequently asked questions</p>
         </Link>
       </div>
     </div>

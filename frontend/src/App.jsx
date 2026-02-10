@@ -18,6 +18,7 @@ import Dashboard from "@/pages/admin/Dashboard"
 import AddProduct from "@/pages/admin/AddProduct"
 import EditProduct from "@/pages/admin/EditProduct"
 import ProductList from "@/pages/admin/ProductList"
+import AdminFaq from "@/pages/admin/AdminFaq"
 import AboutUs from './pages/AboutUs'
 import Terms from './pages/Terms'
 import ReferandEern from './pages/ReferandEern'
@@ -59,8 +60,8 @@ function App() {
         <Route path="/admin/add-product" element={<AddProduct />} />
         <Route path="/admin/edit-product/:id" element={<EditProduct />} />
         <Route path="/admin/products" element={<ProductList />} />
-
         <Route path="/admin/categories" element={<Categories />} />
+        <Route path="/admin/faqs" element={<AdminFaq />} />
       </Routes>
 
       <Footer />
