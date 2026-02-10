@@ -5,26 +5,26 @@ export default function ContactUs() {
 
   return (
     <div className="min-h-screen bg-gray-50 ">
-      <div className="relative min-h-[220px] flex flex-col items-center justify-center mb-14 bg-cover bg-center"
-  style={{
-    backgroundImage:
-      "url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d')",
-  }}
->
-  {/* Overlay */}
-  <div className="absolute inset-0 bg-black/40"></div>
+      <div
+        className="relative min-h-[220px] flex flex-col items-center justify-center mb-14 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d')",
+        }}
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40"></div>
 
-  {/* Content */}
-  <div className="relative text-center px-4">
-    <h1 className="text-4xl md:text-5xl font-bold text-white">
-      Contact Us
-    </h1>
-    <p className="text-gray-200 mt-3 max-w-xl mx-auto">
-      We'd love to hear from you. Send us a message!
-    </p>
-  </div>
-</div>
-
+        {/* Content */}
+        <div className="relative text-center px-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-white">
+            Contact Us
+          </h1>
+          <p className="text-gray-200 mt-3 max-w-xl mx-auto">
+            We'd love to hear from you. Send us a message!
+          </p>
+        </div>
+      </div>
 
       {/* MAIN SECTION */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
