@@ -1,18 +1,34 @@
 import mongoose from "mongoose"
 
-const faqSectionSchema = new mongoose.Schema({
-  name: {
+const faqSchema = new mongoose.Schema({
+  question: {
     type: String,
     required: true
   },
+
+  answer: {
+    type: String,
+    required: true
+  },
+
   type: {
     type: String,
-    default: "faqPage"
+    enum: ["category", "faqPage"],
+    default: "category"
   },
-  order: {
-    type: Number,
-    default: 0
+
+  category: {
+    type: String,
+    required: true
+  },
+
+  // ✅ ADD THIS
+  section: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "FaqSection",
+    default: null
   }
+
 }, { timestamps: true })
 
-export default mongoose.model("FaqSection", faqSectionSchema)
+export default mongoose.model("Faq", faqSchema)
