@@ -42,7 +42,7 @@ export default function ProductSection({ category, products }) {
             infinite={true}
             slidesPerView={imagesPerRow}
             breakpoints={{
-              320: { slidesPerView: 1.2 },
+              320: { slidesPerView: 2.8 },
               640: { slidesPerView: 2.2 },
               768: { slidesPerView: 3 },
               1024: { slidesPerView: imagesPerRow },
@@ -63,11 +63,15 @@ export default function ProductSection({ category, products }) {
         ) : (
           /* 🔹 GRID MODE */
           <div
-            className="grid gap-2"
-            style={{
-              gridTemplateColumns: `repeat(auto-fill, minmax(${100 / imagesPerRow}%, 1fr))`,
-            }}
-          >
+  className="grid gap-2"
+  style={{
+    gridTemplateColumns:
+      window.innerWidth < 640
+        ? "repeat(3, 1fr)" // 📱 Mobile: always 3
+        : `repeat(auto-fill, minmax(${100 / imagesPerRow}%, 1fr))`, // 🖥️ Desktop
+  }}
+>
+
             {products.map((item) =>
               item.slug ? (
                 <Link key={item._id} to={`/product/${item.slug}`}>
