@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "@/api/axios";
 import { Pencil, Trash2, Plus, Check, X } from "lucide-react";
 
 export default function Categories() {
@@ -21,9 +21,10 @@ export default function Categories() {
 
   /* LOAD */
   const loadCategories = async () => {
-    const res = await axios.get("http://localhost:5000/api/categories");
+    const res = await api.get("/api/categories");
     setCategories(res.data);
   };
+
 
   useEffect(() => {
     loadCategories();
@@ -33,9 +34,10 @@ export default function Categories() {
   const handleAddCategory = async () => {
     if (!newCategory.trim()) return;
 
-    await axios.post("http://localhost:5000/api/categories", {
+    await api.post("/api/categories", {
       name: newCategory,
     });
+
 
     setNewCategory("");
     setShowAdd(false);
@@ -54,32 +56,33 @@ export default function Categories() {
     });
   };
 
-const saveEdit = async (id) => {
-  if (!editData.name.trim()) return;
+  const saveEdit = async (id) => {
+    if (!editData.name.trim()) return;
 
-  const payload = {
-    name: editData.name,
-    showSlider: Boolean(editData.showSlider),
-    widthPercent: Number(editData.widthPercent) || 100,
-    bgColor: editData.bgColor || "#ffffff",
-    imagesPerRow: Number(editData.imagesPerRow) || 4,
+    const payload = {
+      name: editData.name,
+      showSlider: Boolean(editData.showSlider),
+      widthPercent: Number(editData.widthPercent) || 100,
+      bgColor: editData.bgColor || "#ffffff",
+      imagesPerRow: Number(editData.imagesPerRow) || 4,
+    };
+
+    await api.put(
+      `/api/categories/${id}`,
+      payload
+    );
+
+
+    setEditingId(null);
+    loadCategories();
   };
-
-  await axios.put(
-    `http://localhost:5000/api/categories/${id}`,
-    payload
-  );
-
-  setEditingId(null);
-  loadCategories();
-};
 
 
   /* DELETE */
   const deleteCategory = async (id) => {
     if (!window.confirm("Delete this category?")) return;
 
-    await axios.delete(`http://localhost:5000/api/categories/${id}`);
+    await api.delete(`/api/categories/${id}`);
     loadCategories();
   };
 
@@ -221,7 +224,7 @@ const saveEdit = async (id) => {
                           ) {
                             setEditData({
                               ...editData,
-                              imagesPerRow: 4, 
+                              imagesPerRow: 4,
                             });
                           }
                         }}

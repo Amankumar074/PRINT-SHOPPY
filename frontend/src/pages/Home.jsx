@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import api from "@/api/axios";
 
 import HeroSection from "@/components/home/HeroSection";
 import ProductSection from "@/components/home/ProductSection";
@@ -11,19 +12,21 @@ export default function Home() {
 
   // 🔹 Load all products
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.error("Products error:", err));
-  }, []);
+  api
+    .get("/api/products")
+    .then((res) => setProducts(res.data))
+    .catch((err) => console.error("Products error:", err))
+}, [])
+
 
   // 🔹 Load all categories
   useEffect(() => {
-    fetch("http://localhost:5000/api/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch((err) => console.error("Categories error:", err));
-  }, []);
+  api
+    .get("/api/categories")
+    .then((res) => setCategories(res.data))
+    .catch((err) => console.error("Categories error:", err))
+}, [])
+
 
   return (
     <>

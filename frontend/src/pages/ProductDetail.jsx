@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
-import axios from "axios"
+import api from "@/api/axios"
+
+const API_URL = import.meta.env.VITE_API_URL
 
 export default function ProductDetail() {
   const { slug } = useParams()
@@ -10,10 +12,10 @@ export default function ProductDetail() {
 
   useEffect(() => {
 
-     axios.get(`http://localhost:5000/api/products/slug/${slug}`)
+    api.get(`/api/products/slug/${slug}`)
       .then(res => {
         setProduct(res.data)
-          if (res.data.images && res.data.images.length > 0) {
+        if (res.data.images && res.data.images.length > 0) {
           setActiveImage(res.data.images[0])
         }
         setLoading(false)
@@ -34,32 +36,31 @@ export default function ProductDetail() {
 
         {/* IMAGE GALLERY */}
         <div>
-      {/* 🔥 MAIN IMAGE */}
-      <img
-        src={`http://localhost:5000/uploads/${activeImage}`}
-        className="rounded-3xl mb-6 shadow-lg w-full"
-        alt="Product"
-      />
-
-      {/* 🔹 THUMBNAILS */}
-      <div className="flex gap-4">
-        {product.images?.map((img, i) => (
+          {/* 🔥 MAIN IMAGE */}
           <img
-            key={i}
-            src={`http://localhost:5000/uploads/${img}`}
-            onClick={() => setActiveImage(img)}
-            className={`w-24 h-24 object-cover rounded-xl border cursor-pointer
-              ${
-                activeImage === img
-                  ? "border-orange-500 ring-2 ring-orange-400"
-                  : "hover:scale-105 transition"
-              }
-            `}
-            alt=""
+            src={`${API_URL}/uploads/${activeImage}`}
+            className="rounded-3xl mb-6 shadow-lg w-full"
+            alt={product.name}
           />
-        ))}
-      </div>
-    </div>
+
+          {/* 🔹 THUMBNAILS */}
+          <div className="flex gap-4">
+            {product.images?.map((img, i) => (
+              <img
+                key={i}
+                src={`${API_URL}/uploads/${img}`}
+                onClick={() => setActiveImage(img)}
+                className={`w-24 h-24 object-cover rounded-xl border cursor-pointer
+              ${activeImage === img
+                    ? "border-orange-500 ring-2 ring-orange-400"
+                    : "hover:scale-105 transition"
+                  }
+            `}
+                alt=""
+              />
+            ))}
+          </div>
+        </div>
 
         {/* PRODUCT INFO */}
         <div>
@@ -142,9 +143,11 @@ export default function ProductDetail() {
             {product.details.map((d, i) => (
               <div key={i}>
                 <img
-                  src={`http://localhost:5000/uploads/${d.image}`}
+                  src={`${API_URL}/uploads/${d.image}`}
                   className="rounded-2xl shadow-md mb-6"
+                  alt={d.title}
                 />
+
                 <h3 className="text-xl font-bold mb-3">
                   {d.title}
                 </h3>

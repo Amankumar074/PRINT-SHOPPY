@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "@/api/axios";
 
 const AddProduct = () => {
   const [form, setForm] = useState({
@@ -23,8 +23,8 @@ const AddProduct = () => {
 
   // 🔹 FETCH CATEGORIES
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/categories")
+    api
+      .get("/api/categories")
       .then((res) => setCategories(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -56,10 +56,10 @@ const AddProduct = () => {
 
 
 
-    await axios.post(
-      "http://localhost:5000/api/products/create",
-      data
-    );
+    await api.post(
+  "/api/products/create",
+  data
+);
 
     alert("Product Added");
   };

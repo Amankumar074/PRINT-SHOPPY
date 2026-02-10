@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-import axios from "axios"
+import api from "@/api/axios"
+const API_URL = import.meta.env.VITE_API_URL
 
 const EditProduct = () => {
   const { id } = useParams()
@@ -27,15 +28,14 @@ const EditProduct = () => {
 
   // 🔹 FETCH CATEGORIES
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/categories")
+    api.get("/api/categories")
       .then(res => setCategories(res.data))
       .catch(err => console.error(err))
   }, [])
 
   // 🔹 LOAD PRODUCT DATA
   useEffect(() => {
-    axios.get("http://localhost:5000/api/products")
+    api.get("/api/products")
       .then(res => {
         const product = res.data.find(p => p._id === id)
 
@@ -89,10 +89,12 @@ const EditProduct = () => {
     newImages.forEach(img => data.append("images", img))
 
     try {
-      await axios.put(
-        `http://localhost:5000/api/products/${id}`,
-        data
-      )
+      await
+        api.put(
+          `/api/products/${id}`,
+          data
+        )
+
 
       alert("Product updated successfully")
       navigate("/admin/products")
@@ -196,7 +198,7 @@ const EditProduct = () => {
                   {images.map((img, i) => (
                     <div key={i} className="relative">
                       <img
-                        src={`http://localhost:5000/uploads/${img}`}
+                        src={`${API_URL}/uploads/${img}`}
                         className="h-20 w-20 object-cover rounded border"
                         alt=""
                       />
@@ -207,10 +209,9 @@ const EditProduct = () => {
                         onClick={async () => {
                           if (!window.confirm("Delete this image?")) return
 
-                          await axios.delete(
-                            `http://localhost:5000/api/products/${id}/image/${img}`
+                          await api.delete(
+                            `/api/products/${id}/image/${img}`
                           )
-
                           // UI update
                           setImages(prev => prev.filter(i => i !== img))
                         }}

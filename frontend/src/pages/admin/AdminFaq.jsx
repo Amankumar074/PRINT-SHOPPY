@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import api from "@/api/axios"
 import { Pencil, Trash2, PlusCircle, Check } from "lucide-react"
 
 export default function AdminFaq() {
@@ -15,7 +15,7 @@ export default function AdminFaq() {
 
   // 🔹 FETCH FAQs
   const fetchFaqs = async () => {
-    const res = await axios.get("http://localhost:5000/api/faqs")
+    const res = await api.get("/api/faqs")
     setFaqs(res.data)
   }
 
@@ -27,10 +27,11 @@ export default function AdminFaq() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    await axios.post("http://localhost:5000/api/faqs", {
-      question,
-      answer
-    })
+    await api.post("/api/faqs", {
+  question,
+  answer
+})
+
 
     setQuestion("")
     setAnswer("")
@@ -46,10 +47,10 @@ export default function AdminFaq() {
 
   // 🔹 SAVE INLINE EDIT
   const saveInlineEdit = async (id) => {
-    await axios.put(`http://localhost:5000/api/faqs/${id}`, {
-      question: editQuestion,
-      answer: editAnswer
-    })
+    await api.put(`/api/faqs/${id}`, {
+  question: editQuestion,
+  answer: editAnswer
+})
 
     setEditingRowId(null)
     setEditQuestion("")
@@ -60,7 +61,7 @@ export default function AdminFaq() {
   // 🔹 DELETE FAQ
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this FAQ?")) return
-    await axios.delete(`http://localhost:5000/api/faqs/${id}`)
+    await api.delete(`/api/faqs/${id}`)
     fetchFaqs()
   }
 

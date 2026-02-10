@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import api from "@/api/axios"
 import { Pencil, Trash2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+
+const API_URL = import.meta.env.VITE_API_URL
 
 const ProductList = () => {
   const [products, setProducts] = useState([])
@@ -9,8 +11,7 @@ const ProductList = () => {
 
   // ✅ GET PRODUCTS
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/products")
+    api.get("/api/products")
       .then((res) => setProducts(res.data))
       .catch((err) => console.error(err))
   }, [])
@@ -20,7 +21,7 @@ const ProductList = () => {
     if (!window.confirm("Are you sure you want to delete this product?")) return
 
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`)
+      await api.delete(`/api/products/${id}`)
       setProducts(products.filter((p) => p._id !== id))
     } catch (err) {
       alert("Delete failed")
@@ -58,7 +59,7 @@ const ProductList = () => {
                 <td className="p-3">{p.category}</td>
                 <td className="p-3">
                   <img
-                    src={`http://localhost:5000/uploads/${p.images[0]}`}
+                    src={`${API_URL}/uploads/${p.images?.[0]}`}
                     className="h-10 w-10 rounded object-cover"
                   />
                 </td>
