@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL
 export default function ProductDetail() {
   const { slug } = useParams()
   const [product, setProduct] = useState(null)
+  const [faqs, setFaqs] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeImage, setActiveImage] = useState("")
 
@@ -18,6 +19,10 @@ export default function ProductDetail() {
         if (res.data.images && res.data.images.length > 0) {
           setActiveImage(res.data.images[0])
         }
+
+        api.get(`/api/faqs?category=${res.data.category}`)
+          .then(faqRes => setFaqs(faqRes.data))
+
         setLoading(false)
       })
       .catch(() => {
@@ -175,6 +180,36 @@ export default function ProductDetail() {
           ))}
         </section>
       )}
+
+      {/* ================= FAQ SECTION ================= */}
+      {faqs.length > 0 && (
+        <section className="max-w-4xl mx-auto mt-32 px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Frequently Asked Questions
+          </h2>
+
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <details
+                key={faq._id}
+                className="group border border-gray-200 rounded-2xl bg-white shadow-sm p-6 transition"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-lg">
+                  {faq.question}
+                  <span className="ml-4 text-theme-color-2 transition group-open:rotate-180">
+                    ▼
+                  </span>
+                </summary>
+
+                <p className="mt-4 text-gray-600 leading-relaxed">
+                  {faq.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+
 
     </div>
   )

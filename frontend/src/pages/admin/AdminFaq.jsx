@@ -6,12 +6,17 @@ export default function AdminFaq() {
   // ADD FAQ STATE
   const [question, setQuestion] = useState("")
   const [answer, setAnswer] = useState("")
+  const [category, setCategory] = useState("")
   const [faqs, setFaqs] = useState([])
+
+  // CATEGORIES
+  const [categories, setCategories] = useState([])
 
   // INLINE EDIT STATE
   const [editingRowId, setEditingRowId] = useState(null)
   const [editQuestion, setEditQuestion] = useState("")
   const [editAnswer, setEditAnswer] = useState("")
+  const [editCategory, setEditCategory] = useState("")
 
   // 🔹 FETCH FAQs
   const fetchFaqs = async () => {
@@ -19,8 +24,15 @@ export default function AdminFaq() {
     setFaqs(res.data)
   }
 
+  // 🔹 FETCH CATEGORIES
+  const fetchCategories = async () => {
+    const res = await api.get("/api/categories")
+    setCategories(res.data)
+  }
+
   useEffect(() => {
     fetchFaqs()
+    fetchCategories()
   }, [])
 
   // 🔹 ADD FAQ
@@ -28,13 +40,14 @@ export default function AdminFaq() {
     e.preventDefault()
 
     await api.post("/api/faqs", {
-  question,
-  answer
-})
-
+      question,
+      answer,
+      category
+    })
 
     setQuestion("")
     setAnswer("")
+    setCategory("")
     fetchFaqs()
   }
 
@@ -43,18 +56,21 @@ export default function AdminFaq() {
     setEditingRowId(faq._id)
     setEditQuestion(faq.question)
     setEditAnswer(faq.answer)
+    setEditCategory(faq.category)
   }
 
   // 🔹 SAVE INLINE EDIT
   const saveInlineEdit = async (id) => {
     await api.put(`/api/faqs/${id}`, {
-  question: editQuestion,
-  answer: editAnswer
-})
+      question: editQuestion,
+      answer: editAnswer,
+      category: editCategory
+    })
 
     setEditingRowId(null)
     setEditQuestion("")
     setEditAnswer("")
+    setEditCategory("")
     fetchFaqs()
   }
 
@@ -74,6 +90,21 @@ export default function AdminFaq() {
         onSubmit={handleSubmit}
         className="bg-white border rounded-lg p-4 space-y-3 mb-8"
       >
+        {/* CATEGORY SELECT */}
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="border rounded p-2 w-full"
+          required
+        >
+          <option value="">Select Category</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat.name}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+
         <input
           type="text"
           placeholder="Enter question"
@@ -107,6 +138,9 @@ export default function AdminFaq() {
           <thead className="bg-gray-100">
             <tr>
               <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">
+                Category
+              </th>
+              <th className="text-left px-4 py-3 text-sm font-semibold text-gray-700">
                 Question / Answer
               </th>
               <th className="text-center px-4 py-3 text-sm font-semibold text-gray-700 w-36">
@@ -118,7 +152,10 @@ export default function AdminFaq() {
           <tbody>
             {faqs.length === 0 && (
               <tr>
-                <td colSpan="2" className="text-center py-6 text-gray-400 text-sm">
+                <td
+                  colSpan="3"
+                  className="text-center py-6 text-gray-400 text-sm"
+                >
                   No FAQs found
                 </td>
               </tr>
@@ -131,6 +168,25 @@ export default function AdminFaq() {
                   index % 2 === 0 ? "bg-white" : "bg-gray-50"
                 }`}
               >
+                {/* CATEGORY */}
+                <td className="px-4 py-3 text-sm text-gray-500">
+                  {editingRowId === faq._id ? (
+                    <select
+                      value={editCategory}
+                      onChange={(e) => setEditCategory(e.target.value)}
+                      className="border rounded p-2 text-sm w-full"
+                    >
+                      {categories.map((cat) => (
+                        <option key={cat._id} value={cat.name}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    faq.category
+                  )}
+                </td>
+
                 {/* QUESTION + ANSWER */}
                 <td className="px-4 py-3 text-sm space-y-2">
                   {editingRowId === faq._id ? (
@@ -138,12 +194,16 @@ export default function AdminFaq() {
                       <input
                         className="w-full border rounded p-2 text-sm"
                         value={editQuestion}
-                        onChange={(e) => setEditQuestion(e.target.value)}
+                        onChange={(e) =>
+                          setEditQuestion(e.target.value)
+                        }
                       />
                       <textarea
                         className="w-full border rounded p-2 text-sm"
                         value={editAnswer}
-                        onChange={(e) => setEditAnswer(e.target.value)}
+                        onChange={(e) =>
+                          setEditAnswer(e.target.value)
+                        }
                       />
                     </>
                   ) : (
@@ -151,7 +211,9 @@ export default function AdminFaq() {
                       <p className="font-medium text-gray-800">
                         {faq.question}
                       </p>
-                      <p className="text-xs text-gray-500">{faq.answer}</p>
+                      <p className="text-xs text-gray-500">
+                        {faq.answer}
+                      </p>
                     </>
                   )}
                 </td>
@@ -161,18 +223,20 @@ export default function AdminFaq() {
                   <div className="flex justify-center gap-2">
                     {editingRowId === faq._id ? (
                       <>
-                        {/* SAVE */}
                         <button
-                          onClick={() => saveInlineEdit(faq._id)}
+                          onClick={() =>
+                            saveInlineEdit(faq._id)
+                          }
                           className="rounded-md bg-green-50 text-green-600 px-3 py-1.5 hover:bg-green-100"
                           title="Save"
                         >
                           <Check size={16} />
                         </button>
 
-                        {/* CANCEL */}
                         <button
-                          onClick={() => setEditingRowId(null)}
+                          onClick={() =>
+                            setEditingRowId(null)
+                          }
                           className="rounded-md bg-gray-100 text-gray-600 px-3 py-1.5 hover:bg-gray-200"
                           title="Cancel"
                         >
@@ -181,18 +245,20 @@ export default function AdminFaq() {
                       </>
                     ) : (
                       <>
-                        {/* EDIT */}
                         <button
-                          onClick={() => startInlineEdit(faq)}
+                          onClick={() =>
+                            startInlineEdit(faq)
+                          }
                           className="rounded-md bg-blue-50 text-blue-600 px-3 py-1.5 hover:bg-blue-100"
                           title="Edit FAQ"
                         >
                           <Pencil size={14} />
                         </button>
 
-                        {/* DELETE */}
                         <button
-                          onClick={() => handleDelete(faq._id)}
+                          onClick={() =>
+                            handleDelete(faq._id)
+                          }
                           className="rounded-md bg-red-50 text-red-600 px-3 py-1.5 hover:bg-red-100"
                           title="Delete FAQ"
                         >

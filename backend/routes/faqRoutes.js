@@ -3,19 +3,28 @@ import Faq from "../models/Faq.js"
 
 const router = express.Router()
 
-// ✅ CREATE FAQ
+// CREATE FAQ
 router.post("/", async (req, res) => {
-  const faq = await Faq.create(req.body)
+  const { question, answer, category } = req.body
+
+  if (!question || !answer || !category) {
+    return res.status(400).json({ message: "All fields required" })
+  }
+
+  const faq = await Faq.create({ question, answer, category })
   res.json(faq)
 })
 
-// ✅ GET ALL FAQ
+// GET FAQ (all / category-wise)
 router.get("/", async (req, res) => {
-  const faqs = await Faq.find().sort({ createdAt: -1 })
+  const { category } = req.query
+  const filter = category ? { category } : {}
+
+  const faqs = await Faq.find(filter).sort({ createdAt: -1 })
   res.json(faqs)
 })
 
-// ✅ UPDATE FAQ
+// UPDATE FAQ
 router.put("/:id", async (req, res) => {
   const faq = await Faq.findByIdAndUpdate(req.params.id, req.body, {
     new: true
@@ -23,7 +32,7 @@ router.put("/:id", async (req, res) => {
   res.json(faq)
 })
 
-// ✅ DELETE FAQ
+// DELETE FAQ
 router.delete("/:id", async (req, res) => {
   await Faq.findByIdAndDelete(req.params.id)
   res.json({ success: true })
