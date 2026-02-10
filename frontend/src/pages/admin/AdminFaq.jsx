@@ -111,11 +111,13 @@ export default function AdminFaq() {
         className="bg-white border rounded-lg p-4 space-y-3 mb-8"
       >
         {/* CATEGORY SELECT */}
+        {/* ================= CATEGORY SELECT ================= */}
         <select
           value={category}
           onChange={(e) => {
             const val = e.target.value
             setCategory(val)
+
             if (val === "FAQ_PAGE") {
               setType("faqPage")
             } else {
@@ -123,11 +125,15 @@ export default function AdminFaq() {
               setSection("")
             }
           }}
-          className="border rounded p-2 w-full"
+          className="border rounded-lg p-3 w-full"
           required
         >
           <option value="">Select Category</option>
+
+          {/* 🔥 FAQ PAGE */}
           <option value="FAQ_PAGE">FAQ Page</option>
+
+          {/* 🧩 PRODUCT CATEGORIES */}
           {categories.map((cat) => (
             <option key={cat._id} value={cat.name}>
               {cat.name}
@@ -135,20 +141,20 @@ export default function AdminFaq() {
           ))}
         </select>
 
-        {/* FAQ PAGE SECTIONS */}
-        {type === "faqPage" && (
+
+        {/* ================= FAQ PAGE SECTIONS ================= */}
+        {category === "FAQ_PAGE" && (
           <select
             value={section}
             onChange={(e) => setSection(e.target.value)}
-            className="border rounded p-2 w-full"
+            className="border rounded-lg p-3 w-full"
             required
           >
             <option value="">Select FAQ Section</option>
-            {sections.map((sec) => (
-              <option key={sec._id} value={sec._id}>
-                {sec.name}
-              </option>
-            ))}
+            <option value="1">Product Customization</option>
+            <option value="2">Communication and Feedback</option>
+            <option value="3">Payment and Security</option>
+            <option value="4">Shipping and Delivery</option>
           </select>
         )}
 
