@@ -3,7 +3,7 @@ import api from "@/api/axios"
 import { Pencil, Trash2, PlusCircle, Check } from "lucide-react"
 
 export default function AdminFaq() {
-  // ADD FAQ STATE
+  /* ================= ADD FAQ STATE ================= */
   const [question, setQuestion] = useState("")
   const [answer, setAnswer] = useState("")
   const [category, setCategory] = useState("")
@@ -12,30 +12,61 @@ export default function AdminFaq() {
 
   const [faqs, setFaqs] = useState([])
 
-  // CATEGORIES + FAQ SECTIONS
+  /* ================= CATEGORIES + SECTIONS ================= */
   const [categories, setCategories] = useState([])
   const [sections, setSections] = useState([])
 
-  // INLINE EDIT STATE
+  const [newSectionName, setNewSectionName] = useState("")
+  const [editingSectionId, setEditingSectionId] = useState(null)
+  const [editingSectionName, setEditingSectionName] = useState("")
+
+  /* ================= INLINE EDIT ================= */
   const [editingRowId, setEditingRowId] = useState(null)
   const [editQuestion, setEditQuestion] = useState("")
   const [editAnswer, setEditAnswer] = useState("")
   const [editCategory, setEditCategory] = useState("")
   const [editSection, setEditSection] = useState("")
 
-  // 🔹 FETCH FAQs
+  const addSection = async () => {
+    if (!newSectionName.trim()) return
+
+    await api.post("/api/faq-sections", {
+      name: newSectionName
+    })
+
+    setNewSectionName("")
+    fetchSections()
+  }
+
+  // UPDATE SECTION
+  const updateSection = async (id) => {
+    await api.put(`/api/faq-sections/${id}`, {
+      name: editingSectionName
+    })
+
+    setEditingSectionId(null)
+    setEditingSectionName("")
+    fetchSections()
+  }
+
+  // DELETE SECTION
+  const deleteSection = async (id) => {
+    if (!window.confirm("Delete this FAQ section?")) return
+    await api.delete(`/api/faq-sections/${id}`)
+    fetchSections()
+  }
+
+  /* ================= FETCH DATA ================= */
   const fetchFaqs = async () => {
     const res = await api.get("/api/faqs")
     setFaqs(res.data)
   }
 
-  // 🔹 FETCH CATEGORIES
   const fetchCategories = async () => {
     const res = await api.get("/api/categories")
     setCategories(res.data)
   }
 
-  // 🔹 FETCH FAQ SECTIONS
   const fetchSections = async () => {
     const res = await api.get("/api/faq-sections")
     setSections(res.data)
@@ -47,7 +78,7 @@ export default function AdminFaq() {
     fetchSections()
   }, [])
 
-  // 🔹 ADD FAQ
+  /* ================= ADD FAQ ================= */
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -56,7 +87,7 @@ export default function AdminFaq() {
       answer,
       category,
       type,
-      section: type === "faqPage" ? section : null
+      section: category === "FAQ_PAGE" ? section : null
     })
 
     setQuestion("")
@@ -67,7 +98,7 @@ export default function AdminFaq() {
     fetchFaqs()
   }
 
-  // 🔹 START INLINE EDIT
+  /* ================= EDIT ================= */
   const startInlineEdit = (faq) => {
     setEditingRowId(faq._id)
     setEditQuestion(faq.question)
@@ -76,7 +107,6 @@ export default function AdminFaq() {
     setEditSection(faq.section?._id || "")
   }
 
-  // 🔹 SAVE INLINE EDIT
   const saveInlineEdit = async (id) => {
     await api.put(`/api/faqs/${id}`, {
       question: editQuestion,
@@ -94,24 +124,112 @@ export default function AdminFaq() {
     fetchFaqs()
   }
 
-  // 🔹 DELETE FAQ
+  /* ================= DELETE ================= */
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this FAQ?")) return
     await api.delete(`/api/faqs/${id}`)
     fetchFaqs()
   }
 
+  /* ================= UI ================= */
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">FAQ Management</h2>
 
-      {/* ADD FAQ FORM */}
+      {/* ================= FAQ PAGE SECTION MANAGER ================= */}
+      <div className="bg-white border rounded-xl p-4 mb-8">
+        <h3 className="text-lg font-semibold mb-4">
+          FAQ Page Sections
+        </h3>
+
+        {/* ADD SECTION */}
+        <div className="flex gap-2 mb-4">
+          <input
+            type="text"
+            placeholder="Enter section name"
+            className="border rounded p-2 flex-1"
+            value={newSectionName}
+            onChange={(e) => setNewSectionName(e.target.value)}
+          />
+          <button
+            onClick={addSection}
+            className="bg-black text-white px-4 rounded hover:bg-gray-800"
+          >
+            Add
+          </button>
+        </div>
+
+        {/* SECTION LIST */}
+        <div className="space-y-2">
+          {sections.map((sec) => (
+            <div
+              key={sec._id}
+              className="flex items-center justify-between border rounded p-2"
+            >
+              {editingSectionId === sec._id ? (
+                <>
+                  <input
+                    className="border rounded p-1 flex-1 mr-2"
+                    value={editingSectionName}
+                    onChange={(e) =>
+                      setEditingSectionName(e.target.value)
+                    }
+                  />
+                  <button
+                    onClick={() => updateSection(sec._id)}
+                    className="bg-green-100 text-green-600 px-3 py-1 rounded mr-1"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingSectionId(null)}
+                    className="bg-gray-200 px-3 py-1 rounded"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span className="font-medium">
+                    {sec.name}
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingSectionId(sec._id)
+                        setEditingSectionName(sec.name)
+                      }}
+                      className="bg-blue-100 text-blue-600 px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteSection(sec._id)}
+                      className="bg-red-100 text-red-600 px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+
+          {sections.length === 0 && (
+            <p className="text-sm text-gray-400">
+              No FAQ sections added yet
+            </p>
+          )}
+        </div>
+      </div>
+
+
+      {/* ================= ADD FAQ FORM ================= */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white border rounded-lg p-4 space-y-3 mb-8"
+        className="bg-white border rounded-xl p-4 space-y-3 mb-8"
       >
         {/* CATEGORY SELECT */}
-        {/* ================= CATEGORY SELECT ================= */}
         <select
           value={category}
           onChange={(e) => {
@@ -129,11 +247,8 @@ export default function AdminFaq() {
           required
         >
           <option value="">Select Category</option>
-
-          {/* 🔥 FAQ PAGE */}
           <option value="FAQ_PAGE">FAQ Page</option>
 
-          {/* 🧩 PRODUCT CATEGORIES */}
           {categories.map((cat) => (
             <option key={cat._id} value={cat.name}>
               {cat.name}
@@ -141,8 +256,7 @@ export default function AdminFaq() {
           ))}
         </select>
 
-
-        {/* ================= FAQ PAGE SECTIONS ================= */}
+        {/* FAQ PAGE SECTION (DYNAMIC) */}
         {category === "FAQ_PAGE" && (
           <select
             value={section}
@@ -151,10 +265,11 @@ export default function AdminFaq() {
             required
           >
             <option value="">Select FAQ Section</option>
-            <option value="1">Product Customization</option>
-            <option value="2">Communication and Feedback</option>
-            <option value="3">Payment and Security</option>
-            <option value="4">Shipping and Delivery</option>
+            {sections.map((sec) => (
+              <option key={sec._id} value={sec._id}>
+                {sec.name}
+              </option>
+            ))}
           </select>
         )}
 
@@ -184,9 +299,9 @@ export default function AdminFaq() {
         </button>
       </form>
 
-      {/* FAQ TABLE */}
+      {/* ================= FAQ TABLE ================= */}
       <div className="overflow-x-auto">
-        <table className="w-full border rounded-lg">
+        <table className="w-full border rounded-xl overflow-hidden">
           <thead className="bg-gray-100">
             <tr>
               <th className="p-3 text-left">Category / Section</th>
@@ -222,9 +337,7 @@ export default function AdminFaq() {
                       {editCategory === "FAQ_PAGE" && (
                         <select
                           value={editSection}
-                          onChange={(e) =>
-                            setEditSection(e.target.value)
-                          }
+                          onChange={(e) => setEditSection(e.target.value)}
                           className="border rounded p-2 w-full"
                         >
                           {sections.map((sec) => (
@@ -254,16 +367,12 @@ export default function AdminFaq() {
                       <input
                         className="border rounded p-2 w-full mb-1"
                         value={editQuestion}
-                        onChange={(e) =>
-                          setEditQuestion(e.target.value)
-                        }
+                        onChange={(e) => setEditQuestion(e.target.value)}
                       />
                       <textarea
                         className="border rounded p-2 w-full"
                         value={editAnswer}
-                        onChange={(e) =>
-                          setEditAnswer(e.target.value)
-                        }
+                        onChange={(e) => setEditAnswer(e.target.value)}
                       />
                     </>
                   ) : (

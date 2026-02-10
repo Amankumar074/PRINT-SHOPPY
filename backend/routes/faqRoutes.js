@@ -20,8 +20,8 @@ router.post("/", async (req, res) => {
       question,
       answer,
       category,
-      section: category === "FAQ_PAGE" ? section || "" : "",
-      type: type || (category === "FAQ_PAGE" ? "faqPage" : "category")
+      type: type || (category === "FAQ_PAGE" ? "faqPage" : "category"),
+      section: category === "FAQ_PAGE" ? section || null : null
     })
 
     res.status(201).json(faq)
@@ -34,7 +34,7 @@ router.post("/", async (req, res) => {
    GET FAQS
    - all
    - category wise
-   - faq page wise
+   - type wise
    - section wise
    ===================================================== */
 router.get("/", async (req, res) => {
@@ -47,7 +47,11 @@ router.get("/", async (req, res) => {
     if (type) filter.type = type
     if (section) filter.section = section
 
-    const faqs = await Faq.find(filter).sort({ createdAt: -1 })
+    const faqs = await Faq
+      .find(filter)
+      .populate("section")        // ✅ VERY IMPORTANT
+      .sort({ createdAt: -1 })
+
     res.json(faqs)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -55,24 +59,23 @@ router.get("/", async (req, res) => {
 })
 
 /* =====================================================
-   GET SINGLE FAQ
+   GET SINGLE FAQ BY ID
    ===================================================== */
-router.get("/", async (req, res) => {
-  const { category, section, type } = req.query
+router.get("/:id", async (req, res) => {
+  try {
+    const faq = await Faq
+      .findById(req.params.id)
+      .populate("section")
 
-  const filter = {}
-  if (category) filter.category = category
-  if (type) filter.type = type
-  if (section) filter.section = section
+    if (!faq) {
+      return res.status(404).json({ message: "FAQ not found" })
+    }
 
-  const faqs = await Faq
-    .find(filter)
-    .populate("section")   // ✅ IMPORTANT
-    .sort({ createdAt: -1 })
-
-  res.json(faqs)
+    res.json(faq)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
 })
-
 
 /* =====================================================
    UPDATE FAQ
@@ -87,11 +90,11 @@ router.put("/:id", async (req, res) => {
         question,
         answer,
         category,
-        section: category === "FAQ_PAGE" ? section || "" : "",
-        type
+        type,
+        section: category === "FAQ_PAGE" ? section || null : null
       },
       { new: true }
-    )
+    ).populate("section")
 
     if (!faq) {
       return res.status(404).json({ message: "FAQ not found" })
