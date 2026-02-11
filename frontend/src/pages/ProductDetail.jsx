@@ -171,17 +171,17 @@ export default function ProductDetail() {
       {/* ================= PRODUCT DETAILS ================= */}
       {product.details?.length > 0 && (
         <section className="mb-24">
-          <h2 className="text-3xl font-bold text-center mb-14">
+          <h2 className="text-3xl font-bold text-center mb-8">
             Product Details
           </h2>
 
           <div className="grid md:grid-cols-2 gap-16">
             {product.details.map((d, i) => (
-              <div key={i}>
-                <h3 className="text-xl font-bold mb-3">
+              <div key={i} className="bg-red-100 p-4 rounded-lg">
+                <h3 className="text-xl text-white font-bold mb-3">
                   {d.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className=" leading-relaxed">
                   {d.desc}
                 </p>
               </div>
