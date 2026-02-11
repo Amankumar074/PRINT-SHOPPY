@@ -6,17 +6,21 @@ const API_URL = import.meta.env.VITE_API_URL
 
 export default function ProductDetail() {
   const { slug } = useParams()
+
   const [product, setProduct] = useState(null)
   const [faqs, setFaqs] = useState([])
   const [loading, setLoading] = useState(true)
+
   const [activeImage, setActiveImage] = useState("")
+  const [selectedOptions, setSelectedOptions] = useState({})
+  const [personalText, setPersonalText] = useState("")
 
   useEffect(() => {
-
     api.get(`/api/products/slug/${slug}`)
       .then(res => {
         setProduct(res.data)
-        if (res.data.images && res.data.images.length > 0) {
+
+        if (res.data.images?.length > 0) {
           setActiveImage(res.data.images[0])
         }
 
@@ -25,9 +29,7 @@ export default function ProductDetail() {
 
         setLoading(false)
       })
-      .catch(() => {
-        setLoading(false)
-      })
+      .catch(() => setLoading(false))
   }, [slug])
 
   if (loading) return <p className="p-10 text-center">Loading...</p>
@@ -41,26 +43,23 @@ export default function ProductDetail() {
 
         {/* IMAGE GALLERY */}
         <div>
-          {/* 🔥 MAIN IMAGE */}
           <img
             src={`${API_URL}/uploads/${activeImage}`}
             className="rounded-3xl mb-6 shadow-lg w-full"
             alt={product.name}
           />
 
-          {/* 🔹 THUMBNAILS */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap">
             {product.images?.map((img, i) => (
               <img
                 key={i}
                 src={`${API_URL}/uploads/${img}`}
                 onClick={() => setActiveImage(img)}
                 className={`w-24 h-24 object-cover rounded-xl border cursor-pointer
-              ${activeImage === img
+                  ${activeImage === img
                     ? "border-orange-500 ring-2 ring-orange-400"
                     : "hover:scale-105 transition"
-                  }
-            `}
+                  }`}
                 alt=""
               />
             ))}
@@ -69,8 +68,7 @@ export default function ProductDetail() {
 
         {/* PRODUCT INFO */}
         <div>
-
-          <span className="inline-block mb-3 text-xs tracking-widest font-semibold text-theme-color-2">
+          <span className="inline-block mb-3 text-xs tracking-widest font-semibold text-orange-500">
             BESTSELLER
           </span>
 
@@ -78,54 +76,88 @@ export default function ProductDetail() {
             {product.name}
           </h1>
 
-          <p className="text-gray-600 text-lg mb-4">
+          <p className="text-gray-600 text-lg mb-6">
             {product.subtitle}
           </p>
 
-          {/* PRICING SLABS */}
+          {/* ================= PRICING SLABS ================= */}
           {product.pricingSlabs?.length > 0 && (
-            <div className="grid sm:grid-cols-2 gap-4 mb-10">
-              {product.pricingSlabs.map((p, i) => (
-                <div
-                  key={i}
-                  className="border rounded-xl p-4 text-center text-sm bg-white shadow-sm"
-                >
-                  {p}
+            <div className="mb-10">
+              <h3 className="font-bold mb-4">Bulk Pricing</h3>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                {product.pricingSlabs.map((s, i) => (
+                  <div
+                    key={i}
+                    className="border rounded-xl p-4 text-center bg-white shadow-sm"
+                  >
+                    <p className="text-sm text-gray-500">
+                      {s.qty}+ Quantity
+                    </p>
+                    <p className="text-lg font-bold text-orange-500">
+                      ₹{s.price} / unit
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ================= OPTIONS ================= */}
+          {product.options?.length > 0 && (
+            <div className="mb-8 space-y-4">
+              {product.options.map((opt, i) => (
+                <div key={i}>
+                  <label className="block font-medium mb-2">
+                    {opt.name}
+                  </label>
+
+                  <select
+                    className="w-full border p-3 rounded-xl"
+                    onChange={(e) =>
+                      setSelectedOptions({
+                        ...selectedOptions,
+                        [opt.name]: e.target.value
+                      })
+                    }
+                  >
+                    <option value="">Select {opt.name}</option>
+                    {opt.values.map((v, idx) => (
+                      <option key={idx} value={v}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               ))}
             </div>
           )}
 
-          {/* PERSONALIZATION */}
+          {/* ================= PERSONALIZATION ================= */}
           {product.personalizationEnabled && (
-            <div className="border-2 border-theme-color-2 rounded-2xl p-6 mb-10 bg-blue-50">
+            <div className="border-2 border-orange-400 rounded-2xl p-6 mb-10 bg-orange-50">
+              <h3 className="font-bold mb-4">
+                Personalize Your Product
+              </h3>
 
-              <h3 className="font-bold mb-4">Personalize Your Product</h3>
-
-              <label className="text-sm font-medium">Select Option</label>
-              <select className="w-full border p-3 rounded-lg mb-4">
-                {product.options?.map((p, i) => (
-                  <option key={i}>{p}</option>
-                ))}
-              </select>
-
-              <label className="text-sm font-medium">Your Name / Text</label>
               <input
                 type="text"
-                placeholder="Enter text"
-                className="w-full border p-3 rounded-lg mb-6"
+                placeholder="Enter your name / text"
+                className="w-full border p-3 rounded-xl"
+                value={personalText}
+                onChange={(e) => setPersonalText(e.target.value)}
               />
             </div>
           )}
 
-          {/* PRICE */}
-          <div className="flex items-center gap-4 mb-6">
+          {/* ================= PRICE ================= */}
+          <div className="flex items-center gap-4 mb-8">
             {product.oldPrice && (
               <span className="line-through text-gray-400 text-lg">
                 ₹{product.oldPrice}
               </span>
             )}
-            <span className="text-3xl font-bold text-theme-color-2">
+            <span className="text-3xl font-bold text-orange-500">
               ₹{product.price}
             </span>
           </div>
@@ -133,7 +165,6 @@ export default function ProductDetail() {
           <button className="w-full bg-orange-500 hover:bg-orange-600 transition text-white py-5 rounded-2xl font-bold text-lg shadow-lg">
             🛒 ADD TO CART
           </button>
-
         </div>
       </section>
 
@@ -147,12 +178,6 @@ export default function ProductDetail() {
           <div className="grid md:grid-cols-2 gap-16">
             {product.details.map((d, i) => (
               <div key={i}>
-                <img
-                  src={`${API_URL}/uploads/${d.image}`}
-                  className="rounded-2xl shadow-md mb-6"
-                  alt={d.title}
-                />
-
                 <h3 className="text-xl font-bold mb-3">
                   {d.title}
                 </h3>
@@ -167,36 +192,36 @@ export default function ProductDetail() {
 
       {/* ================= TRUST ================= */}
       {product.trust?.length > 0 && (
-        <section className="grid md:grid-cols-4 gap-8 bg-gradient-to-r from-blue-400 to-gray-800 p-12 rounded-3xl">
+        <section className="grid md:grid-cols-4 gap-8 bg-gradient-to-r from-orange-500 to-orange-700 p-12 rounded-3xl mb-32">
           {product.trust.map((t, i) => (
-            <div key={i} className="text-center">
-              <h4 className="font-bold text-white mb-2">
-                {t.title}
-              </h4>
-              <p className="text-sm text-white">
-                {t.desc}
+            <div key={i} className="text-center text-white">
+              <p className="font-bold mb-2">
+                {t.icon}
+              </p>
+              <p className="text-sm">
+                {t.text}
               </p>
             </div>
           ))}
         </section>
       )}
 
-      {/* ================= FAQ SECTION ================= */}
+      {/* ================= FAQ ================= */}
       {faqs.length > 0 && (
-        <section className="max-w-4xl mx-auto mt-32 px-4">
+        <section className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">
             Frequently Asked Questions
           </h2>
 
           <div className="space-y-4">
-            {faqs.map((faq, index) => (
+            {faqs.map((faq) => (
               <details
                 key={faq._id}
-                className="group border border-gray-200 rounded-2xl bg-white shadow-sm p-6 transition"
+                className="group border rounded-2xl bg-white shadow-sm p-6"
               >
-                <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-lg">
+                <summary className="flex cursor-pointer items-center justify-between font-semibold text-lg">
                   {faq.question}
-                  <span className="ml-4 text-theme-color-2 transition group-open:rotate-180">
+                  <span className="text-orange-500 group-open:rotate-180 transition">
                     ▼
                   </span>
                 </summary>
@@ -209,8 +234,6 @@ export default function ProductDetail() {
           </div>
         </section>
       )}
-
-
     </div>
   )
 }

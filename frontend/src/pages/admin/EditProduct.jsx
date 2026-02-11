@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import api from "@/api/axios"
+
 const API_URL = import.meta.env.VITE_API_URL
 
 const EditProduct = () => {
@@ -22,8 +23,8 @@ const EditProduct = () => {
   })
 
   const [categories, setCategories] = useState([])
-  const [images, setImages] = useState([])        // existing images
-  const [newImages, setNewImages] = useState([])  // newly selected images
+  const [images, setImages] = useState([])
+  const [newImages, setNewImages] = useState([])
   const [loading, setLoading] = useState(true)
 
   // 🔹 FETCH CATEGORIES
@@ -33,12 +34,11 @@ const EditProduct = () => {
       .catch(err => console.error(err))
   }, [])
 
-  // 🔹 LOAD PRODUCT DATA
+  // 🔹 LOAD PRODUCT
   useEffect(() => {
     api.get("/api/products")
       .then(res => {
         const product = res.data.find(p => p._id === id)
-
         if (!product) {
           alert("Product not found")
           return
@@ -61,10 +61,7 @@ const EditProduct = () => {
         setImages(product.images || [])
         setLoading(false)
       })
-      .catch(err => {
-        console.error(err)
-        alert("Failed to load product")
-      })
+      .catch(() => alert("Failed to load product"))
   }, [id])
 
   // 🔹 UPDATE PRODUCT
@@ -88,25 +85,13 @@ const EditProduct = () => {
 
     newImages.forEach(img => data.append("images", img))
 
-    try {
-      await
-        api.put(
-          `/api/products/${id}`,
-          data
-        )
+    await api.put(`/api/products/${id}`, data)
 
-
-      alert("Product updated successfully")
-      navigate("/admin/products")
-    } catch (err) {
-      console.error(err)
-      alert("Update failed")
-    }
+    alert("Product updated successfully")
+    navigate("/admin/products")
   }
 
-  if (loading) {
-    return <p className="p-6 text-center">Loading...</p>
-  }
+  if (loading) return <p className="p-6 text-center">Loading...</p>
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -117,57 +102,43 @@ const EditProduct = () => {
 
         <form onSubmit={handleUpdate} className="space-y-4">
 
-          {/* NAME */}
+          {/* BASIC INFO */}
           <input
             className="w-full border p-3 rounded"
             placeholder="Product Name"
             value={form.name}
-            onChange={(e) =>
-              setForm({ ...form, name: e.target.value })
-            }
+            onChange={e => setForm({ ...form, name: e.target.value })}
             required
           />
 
-          {/* SUBTITLE */}
           <input
             className="w-full border p-3 rounded"
             placeholder="Subtitle"
             value={form.subtitle}
-            onChange={(e) =>
-              setForm({ ...form, subtitle: e.target.value })
-            }
+            onChange={e => setForm({ ...form, subtitle: e.target.value })}
           />
 
-          {/* OLD PRICE */}
           <input
             type="number"
             className="w-full border p-3 rounded"
             placeholder="Old Price (MRP)"
             value={form.oldPrice}
-            onChange={(e) =>
-              setForm({ ...form, oldPrice: e.target.value })
-            }
+            onChange={e => setForm({ ...form, oldPrice: e.target.value })}
           />
 
-          {/* PRICE */}
           <input
             type="number"
             className="w-full border p-3 rounded"
             placeholder="Price"
             value={form.price}
-            onChange={(e) =>
-              setForm({ ...form, price: e.target.value })
-            }
+            onChange={e => setForm({ ...form, price: e.target.value })}
           />
 
-          {/* SLUG */}
           <input
             className="w-full border p-3 rounded"
             placeholder="Slug"
             value={form.slug}
-            onChange={(e) =>
-              setForm({ ...form, slug: e.target.value })
-            }
+            onChange={e => setForm({ ...form, slug: e.target.value })}
             required
           />
 
@@ -175,9 +146,7 @@ const EditProduct = () => {
           <select
             className="w-full border p-3 rounded"
             value={form.category}
-            onChange={(e) =>
-              setForm({ ...form, category: e.target.value })
-            }
+            onChange={e => setForm({ ...form, category: e.target.value })}
           >
             <option value="">Select Category</option>
             {categories.map(cat => (
@@ -190,39 +159,27 @@ const EditProduct = () => {
           {/* EXISTING IMAGES */}
           {images.length > 0 && (
             <div>
-              <p className="text-sm font-medium mb-2">
-                Current Images
-              </p>
+              <p className="font-medium text-sm mb-2">Current Images</p>
               <div className="flex flex-wrap gap-3">
-                <div className="flex flex-wrap gap-3">
-                  {images.map((img, i) => (
-                    <div key={i} className="relative">
-                      <img
-                        src={`${API_URL}/uploads/${img}`}
-                        className="h-20 w-20 object-cover rounded border"
-                        alt=""
-                      />
-
-                      {/* DELETE BUTTON */}
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          if (!window.confirm("Delete this image?")) return
-
-                          await api.delete(
-                            `/api/products/${id}/image/${img}`
-                          )
-                          // UI update
-                          setImages(prev => prev.filter(i => i !== img))
-                        }}
-                        className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
+                {images.map((img, i) => (
+                  <div key={i} className="relative">
+                    <img
+                      src={`${API_URL}/uploads/${img}`}
+                      className="h-20 w-20 rounded object-cover border"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!window.confirm("Delete image?")) return
+                        await api.delete(`/api/products/${id}/image/${img}`)
+                        setImages(prev => prev.filter(i => i !== img))
+                      }}
+                      className="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full text-xs"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -233,17 +190,177 @@ const EditProduct = () => {
             multiple
             accept="image/*"
             className="w-full border p-2 rounded"
-            onChange={(e) =>
-              setNewImages([...e.target.files])
-            }
+            onChange={e => setNewImages([...e.target.files])}
           />
 
-          {/* PERSONALIZATION TOGGLE */}
+          {/* 🔥 PRICING SLABS */}
+          <h3 className="font-semibold">Pricing Slabs</h3>
+          <button
+            type="button"
+            className="text-blue-600 text-sm"
+            onClick={() =>
+              setForm({
+                ...form,
+                pricingSlabs: [...form.pricingSlabs, { qty: "", price: "" }]
+              })
+            }
+          >
+            + Add Slab
+          </button>
+
+          {form.pricingSlabs.map((s, i) => (
+            <div key={i} className="flex gap-2">
+              <input
+                type="number"
+                className="border p-2 w-1/2"
+                placeholder="Qty"
+                value={s.qty}
+                onChange={e => {
+                  const arr = [...form.pricingSlabs]
+                  arr[i].qty = e.target.value
+                  setForm({ ...form, pricingSlabs: arr })
+                }}
+              />
+              <input
+                type="number"
+                className="border p-2 w-1/2"
+                placeholder="Price"
+                value={s.price}
+                onChange={e => {
+                  const arr = [...form.pricingSlabs]
+                  arr[i].price = e.target.value
+                  setForm({ ...form, pricingSlabs: arr })
+                }}
+              />
+            </div>
+          ))}
+
+          {/* 🔥 OPTIONS */}
+          <h3 className="font-semibold">Options</h3>
+          <button
+            type="button"
+            className="text-blue-600 text-sm"
+            onClick={() =>
+              setForm({
+                ...form,
+                options: [...form.options, { name: "", values: [] }]
+              })
+            }
+          >
+            + Add Option
+          </button>
+
+          {form.options.map((o, i) => (
+            <div key={i}>
+              <input
+                className="border p-2 w-full mb-1"
+                placeholder="Option Name"
+                value={o.name}
+                onChange={e => {
+                  const arr = [...form.options]
+                  arr[i].name = e.target.value
+                  setForm({ ...form, options: arr })
+                }}
+              />
+              <input
+                className="border p-2 w-full"
+                placeholder="Values (comma separated)"
+                value={o.values.join(",")}
+                onChange={e => {
+                  const arr = [...form.options]
+                  arr[i].values = e.target.value.split(",")
+                  setForm({ ...form, options: arr })
+                }}
+              />
+            </div>
+          ))}
+
+          {/* 🔥 DETAILS */}
+          <h3 className="font-semibold">Product Details</h3>
+          <button
+            type="button"
+            className="text-blue-600 text-sm"
+            onClick={() =>
+              setForm({
+                ...form,
+                details: [...form.details, { title: "", desc: "" }]
+              })
+            }
+          >
+            + Add Detail
+          </button>
+
+          {form.details.map((d, i) => (
+            <div key={i}>
+              <input
+                className="border p-2 w-full mb-1"
+                placeholder="Title"
+                value={d.title}
+                onChange={e => {
+                  const arr = [...form.details]
+                  arr[i].title = e.target.value
+                  setForm({ ...form, details: arr })
+                }}
+              />
+              <textarea
+                className="border p-2 w-full"
+                placeholder="Description"
+                value={d.desc}
+                onChange={e => {
+                  const arr = [...form.details]
+                  arr[i].desc = e.target.value
+                  setForm({ ...form, details: arr })
+                }}
+              />
+            </div>
+          ))}
+
+          {/* 🔥 TRUST */}
+          <h3 className="font-semibold">Trust Section</h3>
+          <button
+            type="button"
+            className="text-blue-600 text-sm"
+            onClick={() =>
+              setForm({
+                ...form,
+                trust: [...form.trust, { icon: "", text: "" }]
+              })
+            }
+          >
+            + Add Trust
+          </button>
+
+          {form.trust.map((t, i) => (
+            <div key={i} className="flex gap-2">
+              <input
+                className="border p-2 w-1/2"
+                placeholder="Icon"
+                value={t.icon}
+                onChange={e => {
+                  const arr = [...form.trust]
+                  arr[i].icon = e.target.value
+                  setForm({ ...form, trust: arr })
+                }}
+              />
+              <input
+                className="border p-2 w-1/2"
+                placeholder="Text"
+                value={t.text}
+                onChange={e => {
+                  const arr = [...form.trust]
+                  arr[i].text = e.target.value
+                  setForm({ ...form, trust: arr })
+                }}
+              />
+            </div>
+          ))}
+
+          {/* PERSONALIZATION */}
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
               checked={form.personalizationEnabled}
-              onChange={(e) =>
+              onChange={e =>
                 setForm({
                   ...form,
                   personalizationEnabled: e.target.checked

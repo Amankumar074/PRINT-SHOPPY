@@ -2,38 +2,77 @@ import mongoose from "mongoose"
 
 const productSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
+    name: {
+      type: String,
+      required: true
+    },
+
     subtitle: String,
 
-    slug: { type: String, required: true, unique: true },
+    slug: {
+      type: String,
+      required: true,
+      unique: true
+    },
 
-    price: Number,
+    price: {
+      type: Number,
+      required: true
+    },
+
     oldPrice: Number,
 
-    category: { type: String, required: true },
+    category: {
+      type: String,
+      required: true
+    },
 
-    images: [String],  
+    images: [String],
 
-    pricingSlabs: [String],
+    // 🔥 PRINTSHOPPY STYLE PRICING
+    pricingSlabs: [
+      {
+        qty: {
+          type: Number,
+          required: true
+        },
+        price: {
+          type: Number,
+          required: true
+        }
+      }
+    ],
 
-    options: [String],
+    // 🔥 OPTIONS (SIZE / COLOR / PAPER etc.)
+    options: [
+      {
+        name: {
+          type: String,
+          required: true
+        },
+        values: [String]
+      }
+    ],
+
     personalizationEnabled: {
       type: Boolean,
       default: true
     },
 
+    // 🔥 PRODUCT DETAILS SECTION
     details: [
       {
         title: String,
         desc: String,
-        image: String
+        image: String // optional (future use)
       }
     ],
 
+    // 🔥 TRUST BADGES
     trust: [
       {
-        title: String,
-        desc: String
+        icon: String,
+        text: String
       }
     ],
 
@@ -44,6 +83,7 @@ const productSchema = new mongoose.Schema(
 
     status: {
       type: String,
+      enum: ["active", "inactive"],
       default: "active"
     }
   },
