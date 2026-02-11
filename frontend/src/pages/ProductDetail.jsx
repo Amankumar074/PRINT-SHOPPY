@@ -1,14 +1,13 @@
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import api from "@/api/axios"
-import { useCart } from "@/context/CartContext";
-
+import { useCart } from "@/context/CartContext"
 
 const API_URL = import.meta.env.VITE_API_URL
 
 export default function ProductDetail() {
   const { slug } = useParams()
-  const { cart, setCart } = useCart();
+  const { cart, setCart } = useCart()
 
   const [product, setProduct] = useState(null)
   const [faqs, setFaqs] = useState([])
@@ -18,6 +17,40 @@ export default function ProductDetail() {
   const [selectedOptions, setSelectedOptions] = useState({})
   const [personalText, setPersonalText] = useState("")
 
+  const [customImage, setCustomImage] = useState(null)
+  const [previewImage, setPreviewImage] = useState("")
+
+  const [showFrameModal, setShowFrameModal] = useState(false)
+
+  /* ================= SHAPES ================= */
+  const [selectedShape, setSelectedShape] = useState("square")
+
+  const shapes = [
+    { id: 1, name: "Square", value: "square" },
+    { id: 2, name: "Circle", value: "circle" },
+    { id: 3, name: "Triangle", value: "triangle" }
+  ]
+
+  const getShapeStyle = () => {
+    if (selectedShape === "circle") {
+      return {
+        borderRadius: "50%",
+        clipPath: "circle(50% at 50% 50%)"
+      }
+    }
+
+    if (selectedShape === "triangle") {
+      return {
+        clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)"
+      }
+    }
+
+    return {
+      borderRadius: "0"
+    }
+  }
+
+  /* ================= API ================= */
   useEffect(() => {
     api.get(`/api/products/slug/${slug}`)
       .then(res => {
@@ -35,31 +68,37 @@ export default function ProductDetail() {
       .catch(() => setLoading(false))
   }, [slug])
 
+  /* ================= ADD TO CART ================= */
   const addToCart = () => {
-  // basic validation
-  if (product.options?.length > 0) {
-    for (let opt of product.options) {
-      if (!selectedOptions[opt.name]) {
-        alert(`Please select ${opt.name}`);
-        return;
+    if (product.options?.length > 0) {
+      for (let opt of product.options) {
+        if (!selectedOptions[opt.name]) {
+          alert(`Please select ${opt.name}`)
+          return
+        }
       }
     }
+
+    if (product.personalizationEnabled && !previewImage) {
+      alert("Please upload photo")
+      return
+    }
+
+    const cartItem = {
+      productId: product._id,
+      name: product.name,
+      image: product.images[0],
+      price: product.price,
+      quantity: 1,
+      options: selectedOptions,
+      personalization: personalText,
+      uploadedImage: previewImage,
+      shape: selectedShape
+    }
+
+    setCart(prev => [...prev, cartItem])
+    alert("Product added to cart")
   }
-
-  const cartItem = {
-    productId: product._id,
-    name: product.name,
-    image: product.images[0],
-    price: product.price,
-    quantity: 1,
-    options: selectedOptions,
-    personalization: personalText
-  };
-
-  setCart(prev => [...prev, cartItem]);
-  alert("Product added to cart");
-};
-
 
   if (loading) return <p className="p-10 text-center">Loading...</p>
   if (!product) return <p className="p-10 text-center">Product not found</p>
@@ -70,7 +109,7 @@ export default function ProductDetail() {
       {/* ================= HERO ================= */}
       <section className="grid lg:grid-cols-2 gap-16 mb-24">
 
-        {/* IMAGE GALLERY */}
+        {/* ================= IMAGE GALLERY ================= */}
         <div>
           <img
             src={`${API_URL}/uploads/${activeImage}`}
@@ -95,7 +134,7 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* PRODUCT INFO */}
+        {/* ================= PRODUCT INFO ================= */}
         <div>
           <span className="inline-block mb-3 text-xs tracking-widest font-semibold text-orange-500">
             BESTSELLER
@@ -113,16 +152,10 @@ export default function ProductDetail() {
           {product.pricingSlabs?.length > 0 && (
             <div className="mb-10">
               <h3 className="font-bold mb-4">Bulk Pricing</h3>
-
               <div className="grid sm:grid-cols-2 gap-4">
                 {product.pricingSlabs.map((s, i) => (
-                  <div
-                    key={i}
-                    className="border rounded-xl p-4 text-center bg-white shadow-sm"
-                  >
-                    <p className="text-sm text-gray-500">
-                      {s.qty}+ Quantity
-                    </p>
+                  <div key={i} className="border rounded-xl p-4 text-center">
+                    <p className="text-sm text-gray-500">{s.qty}+ Quantity</p>
                     <p className="text-lg font-bold text-orange-500">
                       ₹{s.price} / unit
                     </p>
@@ -140,7 +173,6 @@ export default function ProductDetail() {
                   <label className="block font-medium mb-2">
                     {opt.name}
                   </label>
-
                   <select
                     className="w-full border p-3 rounded-xl"
                     onChange={(e) =>
@@ -152,9 +184,7 @@ export default function ProductDetail() {
                   >
                     <option value="">Select {opt.name}</option>
                     {opt.values.map((v, idx) => (
-                      <option key={idx} value={v}>
-                        {v}
-                      </option>
+                      <option key={idx} value={v}>{v}</option>
                     ))}
                   </select>
                 </div>
@@ -164,19 +194,39 @@ export default function ProductDetail() {
 
           {/* ================= PERSONALIZATION ================= */}
           {product.personalizationEnabled && (
-            <div className="border-2 border-orange-400 rounded-2xl p-6 mb-10 bg-orange-50">
-              <h3 className="font-bold mb-4">
-                Personalize Your Product
-              </h3>
+            <>
+              <div className="border-2 border-orange-400 rounded-2xl p-6 mb-8 bg-orange-50">
+                <h3 className="font-bold mb-4">Personalize Your Product</h3>
+                <input
+                  type="text"
+                  placeholder="Enter your name / text"
+                  className="w-full border p-3 rounded-xl"
+                  value={personalText}
+                  onChange={(e) => setPersonalText(e.target.value)}
+                />
+              </div>
 
-              <input
-                type="text"
-                placeholder="Enter your name / text"
-                className="w-full border p-3 rounded-xl"
-                value={personalText}
-                onChange={(e) => setPersonalText(e.target.value)}
-              />
-            </div>
+              <div className="border-2 border-dashed border-orange-400 rounded-2xl p-6 mb-10 bg-orange-50 text-center">
+                <h3 className="font-bold mb-4">Upload Your Photo</h3>
+
+                <button
+                  onClick={() => setShowFrameModal(true)}
+                  className="bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold"
+                >
+                  📷 Choose Photo & Shape
+                </button>
+
+                {previewImage && (
+                  <div className="mt-6 flex justify-center">
+                    <img
+                      src={previewImage}
+                      className="w-40 h-40 object-cover shadow-lg"
+                      style={getShapeStyle()}
+                    />
+                  </div>
+                )}
+              </div>
+            </>
           )}
 
           {/* ================= PRICE ================= */}
@@ -192,15 +242,104 @@ export default function ProductDetail() {
           </div>
 
           <button
-  onClick={addToCart}
-  className="w-full bg-orange-500 hover:bg-orange-600 transition text-white py-5 rounded-2xl font-bold text-lg shadow-lg"
->
-  🛒 ADD TO CART
-</button>
-
+            onClick={addToCart}
+            className="w-full bg-orange-500 hover:bg-orange-600 transition text-white py-5 rounded-2xl font-bold text-lg shadow-lg"
+          >
+            🛒 ADD TO CART
+          </button>
         </div>
       </section>
 
+      {/* ================= MODAL ================= */}
+      {showFrameModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center">
+          <div className="bg-white w-full max-w-4xl rounded-2xl p-6 relative">
+
+            <button
+              onClick={() => setShowFrameModal(false)}
+              className="absolute top-4 right-4 text-xl"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-2xl font-bold mb-6 text-center">
+              Upload Photo & Select Shape
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-8">
+
+              <div className="flex items-center justify-center">
+                <div className="w-64 h-64 border rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                  {previewImage ? (
+                    <img
+                      src={previewImage}
+                      className="w-full h-full object-cover"
+                      style={getShapeStyle()}
+                    />
+                  ) : (
+                    <p className="text-gray-400">Upload image</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="mb-6"
+                  onChange={(e) => {
+                    const file = e.target.files[0]
+                    setCustomImage(file)
+                    setPreviewImage(URL.createObjectURL(file))
+                  }}
+                />
+
+                <h3 className="font-semibold mb-3">Choose Shape</h3>
+
+                <div className="grid grid-cols-3 gap-4">
+                  {shapes.map(shape => (
+                    <div
+                      key={shape.id}
+                      onClick={() => setSelectedShape(shape.value)}
+                      className={`border rounded-lg p-4 cursor-pointer text-center
+                        ${selectedShape === shape.value
+                          ? "border-orange-500 ring-2 ring-orange-400"
+                          : ""
+                        }`}
+                    >
+                      <div
+                        className="w-16 h-16 mx-auto bg-gray-300 mb-2"
+                        style={
+                          shape.value === "circle"
+                            ? { borderRadius: "50%" }
+                            : shape.value === "triangle"
+                            ? { clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)" }
+                            : {}
+                        }
+                      ></div>
+                      <p className="text-xs font-medium">{shape.name}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    if (!previewImage) {
+                      alert("Please upload an image")
+                      return
+                    }
+                    setShowFrameModal(false)
+                  }}
+                  className="mt-6 w-full bg-orange-500 text-white py-3 rounded-xl font-semibold"
+                >
+                  ✅ Done
+                </button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* ================= PRODUCT DETAILS ================= */}
       {product.details?.length > 0 && (
         <section className="mb-24">
