@@ -8,10 +8,7 @@ import NotFound from "@/pages/NotFound"
 import Home from "@/pages/Home"
 import ScrollToTop from "@/components/ScrollToTop"
 
-import MiniAcrylicPhotoCollage from "@/pages/MiniAcrylicPhotoCollage"
-import PersonalizedNamePencil from "@/pages/PersonalizedNamePencil"
 import ProductDetail from "@/pages/ProductDetail"
-import CustomizableFridgeMagnet from "@/pages/CustomizableFridgeMagnet"
 
 import Register from '@/pages/commonpage/Register'
 import Login from '@/pages/commonpage/Login'
@@ -31,6 +28,7 @@ import Faq from '@/pages/Faq'
 import AccountPage from '@/pages/AccountPage'
 import Transactions from '@/pages/Transactions'
 import Order from '@/pages/Order'
+import FaqDetails from './pages/FaqDetails'
 
 
 function App() {
@@ -41,10 +39,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/mini-acrylic-photo-collage" element={<MiniAcrylicPhotoCollage />} />
         <Route path="/product/:slug" element={<ProductDetail />} />
-        <Route path="/personalized-name-pencil" element={<PersonalizedNamePencil />} />
-        <Route path="/customizable-fridge-magnet" element={<CustomizableFridgeMagnet />} />
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/terms" element={<Terms/>} />
         <Route path="/ReferandEern" element={<ReferandEern/>} />
@@ -55,6 +50,7 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register/>} />
         <Route path="/credits" element={<Transactions/>} />
+        <Route path="/faqdetails/:id" element={<FaqDetails/>} />
         <Route path="*" element={<NotFound />} />
 
         {/* admin pages */}
