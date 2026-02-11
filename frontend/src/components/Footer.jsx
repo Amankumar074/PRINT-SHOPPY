@@ -39,12 +39,14 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 py-10 gap-10">
           {/* FOLLOW US */}
           <div className="text-center">
-            <h3 className="text-xl font-bold mb-6">FOLLOW US</h3>
-
+            <h3 className="text-xl font-bold mb-3">FOLLOW US</h3>
+             <p className="text-white/70 mb-3">
+             Join Our Creative Community
+            </p>
             <div className="flex justify-center gap-4">
               <Link
                 to="/facebook"
-                className="w-10 h-10 flex items-center justify-center 
+                className="w-12 h-12 flex items-center justify-center 
                  rounded-full bg-white/10 
                  text-white/80 hover:bg-white
                  hover:text-black transition"
@@ -54,7 +56,7 @@ export default function Footer() {
 
               <Link
                 to="/twitter"
-                className="w-10 h-10 flex items-center justify-center 
+                className="w-12 h-12 flex items-center justify-center 
                  rounded-full bg-white/10 
                  text-white/80 hover:bg-white
                  hover:text-black transition"
@@ -64,7 +66,7 @@ export default function Footer() {
 
               <Link
                 to="/instagram"
-                className="w-10 h-10 flex items-center justify-center 
+                className="w-12 h-12 flex items-center justify-center 
                  rounded-full bg-white/10 
                  text-white/80 hover:bg-white
                  hover:text-black transition"
@@ -74,7 +76,7 @@ export default function Footer() {
 
               <Link
                 to="/youtube"
-                className="w-10 h-10 flex items-center justify-center 
+                className="w-12 h-12 flex items-center justify-center 
                  rounded-full bg-white/10 
                  text-white/80 hover:bg-white
                  hover:text-black transition"
@@ -86,8 +88,8 @@ export default function Footer() {
 
           {/* SUPPORT */}
           <div className="text-center">
-            <h3 className="text-xl font-bold mb-2">SUPPORT</h3>
-            <p className="text-white/70 mb-6">
+            <h3 className="text-xl font-bold mb-3">SUPPORT</h3>
+            <p className="text-white/70 mb-3">
               Got Questions? We're Here To Help
             </p>
             <div className="flex justify-center gap-10">
