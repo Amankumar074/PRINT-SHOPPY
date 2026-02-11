@@ -1,69 +1,93 @@
-import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { User, Package, MapPin, Heart, LogOut } from "lucide-react";
 
 export default function AccountPage() {
-  const [mobile, setMobile] = useState("");
-
-  const handleLogin = () => {
-    // you will connect actual OTP login API here
-    alert("OTP sent to: " + mobile);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <div className="bg-indigo-600 text-white py-8 text-center">
-        <h1 className="text-3xl font-bold">Login / Register</h1>
-        <p className="mt-2 text-sm">Login with your mobile number</p>
-      </div>
+    <div className="min-h-screen bg-gray-100 py-10">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
 
-      {/* Login Form */}
-      <div className="flex-grow container mx-auto px-4 py-8 max-w-md">
+        {/* Sidebar */}
         <div className="bg-white shadow rounded-lg p-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Mobile Number
-          </label>
-          <input
-            type="text"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            placeholder="e.g. 9999999999"
-            className="w-full px-4 py-3 border rounded-md focus:outline-indigo-500"
-          />
+          <h2 className="text-lg font-semibold mb-6">My Account</h2>
 
-          <button
-            onClick={handleLogin}
-            className="w-full bg-indigo-600 text-white py-2 mt-4 rounded-lg font-medium hover:bg-indigo-700 transition"
-          >
-            Send OTP
-          </button>
-
-          {/* Optional Register link */}
-          <p className="text-center text-sm mt-4 text-gray-600">
-            Don’t have an account?{" "}
-            <a href="/register" className="text-indigo-600 font-semibold">
-              Register
-            </a>
-          </p>
+          <ul className="space-y-4 text-sm">
+            <li>
+              <Link to="/account" className="flex items-center gap-2 hover:text-indigo-600">
+                <User size={18} /> Profile
+              </Link>
+            </li>
+            <li>
+              <Link to="/orders" className="flex items-center gap-2 hover:text-indigo-600">
+                <Package size={18} /> My Orders
+              </Link>
+            </li>
+            <li>
+              <Link to="/address" className="flex items-center gap-2 hover:text-indigo-600">
+                <MapPin size={18} /> Address Book
+              </Link>
+            </li>
+            <li>
+              <Link to="/wishlist" className="flex items-center gap-2 hover:text-indigo-600">
+                <Heart size={18} /> Wishlist
+              </Link>
+            </li>
+            <li>
+              <button className="flex items-center gap-2 text-red-500 hover:text-red-600">
+                <LogOut size={18} /> Logout
+              </button>
+            </li>
+          </ul>
         </div>
+
+        {/* Main Content */}
+        <div className="md:col-span-3 space-y-6">
+
+          {/* Welcome Card */}
+          <div className="bg-white shadow rounded-lg p-6">
+            <h1 className="text-xl font-semibold">
+              Welcome Back, User 👋
+            </h1>
+            <p className="text-gray-600 mt-2 text-sm">
+              From your account dashboard you can view your recent orders,
+              manage your addresses and edit your account details.
+            </p>
+          </div>
+
+          {/* Dashboard Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+            <div className="bg-white shadow rounded-lg p-6 hover:shadow-lg transition">
+              <h3 className="font-semibold mb-2">Orders</h3>
+              <p className="text-sm text-gray-600">
+                Track, return or buy things again.
+              </p>
+            </div>
+
+            <div className="bg-white shadow rounded-lg p-6 hover:shadow-lg transition">
+              <h3 className="font-semibold mb-2">Addresses</h3>
+              <p className="text-sm text-gray-600">
+                Edit addresses for orders and gifts.
+              </p>
+            </div>
+
+            <div className="bg-white shadow rounded-lg p-6 hover:shadow-lg transition">
+              <h3 className="font-semibold mb-2">Account Details</h3>
+              <p className="text-sm text-gray-600">
+                Edit login, name and mobile number.
+              </p>
+            </div>
+
+            <div className="bg-white shadow rounded-lg p-6 hover:shadow-lg transition">
+              <h3 className="font-semibold mb-2">Wishlist</h3>
+              <p className="text-sm text-gray-600">
+                View and manage your wishlist items.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
       </div>
-
-      {/* Info Banners */}
-      <div className="container mx-auto px-4 py-6 grid gap-4 grid-cols-1 md:grid-cols-2">
-        <div className="bg-white p-4 rounded shadow text-center">
-          <p className="font-medium">Free Shipping</p>
-          <p className="text-sm text-gray-600">On all orders across India</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow text-center">
-          <p className="font-medium">30 Days Return Policy</p>
-          <p className="text-sm text-gray-600">Hassle-free returns</p>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-100 text-gray-700 text-sm text-center py-6">
-        <p>Need help? Contact our support team</p>
-        <p>Phone: +91 8666776777</p>
-      </footer>
     </div>
   );
 }
