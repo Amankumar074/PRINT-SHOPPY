@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { ShoppingCart, User, LogIn, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCart } from "@/context/CartContext";
 
 export default function Header() {
   const [isSticky, setIsSticky] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const { cart } = useCart(); // 🔥 CART CONTEXT
 
   useEffect(() => {
     let ticking = false;
@@ -53,7 +56,10 @@ export default function Header() {
             </button>
 
             {/* Logo Center */}
-            <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 md:static md:transform-none">
+            <Link
+              to="/"
+              className="absolute left-1/2 transform -translate-x-1/2 md:static md:transform-none"
+            >
               <img src="/logo.svg" alt="logo" className="h-8" />
             </Link>
 
@@ -62,16 +68,55 @@ export default function Header() {
               <Link to="/login">
                 <button>Login</button>
               </Link>
+
               <Link to="/register">
                 <button className="border px-4 py-1 rounded">
                   Register
                 </button>
               </Link>
-              <ShoppingCart className="w-6 h-6" />
+
+              {/* 🔥 CART ICON WITH COUNT */}
+              <Link to="/cart" className="relative">
+                <ShoppingCart className="w-6 h-6" />
+
+                {cart.length > 0 && (
+                  <span
+                    className="
+                      absolute -top-2 -right-2
+                      bg-orange-500 text-white
+                      text-xs font-bold
+                      w-5 h-5
+                      flex items-center justify-center
+                      rounded-full
+                    "
+                  >
+                    {cart.length}
+                  </span>
+                )}
+              </Link>
             </nav>
 
             {/* Mobile Right */}
-            <div className="flex md:hidden gap-4">
+            <div className="flex md:hidden gap-4 items-center">
+              {/* 🔥 MOBILE CART */}
+              <Link to="/cart" className="relative">
+                <ShoppingCart className="w-6 h-6" />
+                {cart.length > 0 && (
+                  <span
+                    className="
+                      absolute -top-2 -right-2
+                      bg-orange-500 text-white
+                      text-xs
+                      w-5 h-5
+                      flex items-center justify-center
+                      rounded-full
+                    "
+                  >
+                    {cart.length}
+                  </span>
+                )}
+              </Link>
+
               <User />
             </div>
 
@@ -108,6 +153,11 @@ export default function Header() {
             </Link>
             <Link to="/register" onClick={() => setIsOpen(false)}>
               Register
+            </Link>
+
+            {/* 🔥 CART LINK IN MOBILE SIDEBAR */}
+            <Link to="/cart" onClick={() => setIsOpen(false)}>
+              Cart ({cart.length})
             </Link>
           </div>
         </div>

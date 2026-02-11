@@ -12,6 +12,9 @@ import ProductDetail from "@/pages/ProductDetail"
 
 import Register from '@/pages/commonpage/Register'
 import Login from '@/pages/commonpage/Login'
+import Cart from "@/pages/Cart";
+import { CartProvider } from "@/context/CartContext";
+
 
 // admin pages
 import Dashboard from "@/pages/admin/Dashboard"
@@ -34,6 +37,7 @@ import FaqDetails from './pages/FaqDetails'
 function App() {
   return (
     <>
+     <CartProvider>
        <ScrollToTop />
       <Header />
 
@@ -49,6 +53,7 @@ function App() {
         <Route path="/account" element={<AccountPage/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register/>} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/credits" element={<Transactions/>} />
         <Route path="/faqdetails/:id" element={<FaqDetails/>} />
         <Route path="*" element={<NotFound />} />
@@ -63,6 +68,7 @@ function App() {
       </Routes>
 
       <Footer />
+      </CartProvider>
     </>
   )
 }

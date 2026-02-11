@@ -1,11 +1,14 @@
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import api from "@/api/axios"
+import { useCart } from "@/context/CartContext";
+
 
 const API_URL = import.meta.env.VITE_API_URL
 
 export default function ProductDetail() {
   const { slug } = useParams()
+  const { cart, setCart } = useCart();
 
   const [product, setProduct] = useState(null)
   const [faqs, setFaqs] = useState([])
@@ -31,6 +34,32 @@ export default function ProductDetail() {
       })
       .catch(() => setLoading(false))
   }, [slug])
+
+  const addToCart = () => {
+  // basic validation
+  if (product.options?.length > 0) {
+    for (let opt of product.options) {
+      if (!selectedOptions[opt.name]) {
+        alert(`Please select ${opt.name}`);
+        return;
+      }
+    }
+  }
+
+  const cartItem = {
+    productId: product._id,
+    name: product.name,
+    image: product.images[0],
+    price: product.price,
+    quantity: 1,
+    options: selectedOptions,
+    personalization: personalText
+  };
+
+  setCart(prev => [...prev, cartItem]);
+  alert("Product added to cart");
+};
+
 
   if (loading) return <p className="p-10 text-center">Loading...</p>
   if (!product) return <p className="p-10 text-center">Product not found</p>
@@ -162,9 +191,13 @@ export default function ProductDetail() {
             </span>
           </div>
 
-          <button className="w-full bg-orange-500 hover:bg-orange-600 transition text-white py-5 rounded-2xl font-bold text-lg shadow-lg">
-            🛒 ADD TO CART
-          </button>
+          <button
+  onClick={addToCart}
+  className="w-full bg-orange-500 hover:bg-orange-600 transition text-white py-5 rounded-2xl font-bold text-lg shadow-lg"
+>
+  🛒 ADD TO CART
+</button>
+
         </div>
       </section>
 
