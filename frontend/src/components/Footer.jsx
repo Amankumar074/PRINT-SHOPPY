@@ -46,7 +46,7 @@ export default function Footer() {
             <div className="flex justify-center gap-4">
               <Link
                 to="/facebook"
-                className="w-12 h-12 flex items-center justify-center 
+                className="w-12 h-12   flex items-center justify-center 
                  rounded-full bg-white/10 
                  text-white/80 hover:bg-white
                  hover:text-black transition"
