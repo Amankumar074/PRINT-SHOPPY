@@ -54,8 +54,8 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register/>} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/credits" element={<Transactions/>} />
         <Route path="/faqdetails/:id" element={<FaqDetails/>} />
+        <Route path="/credits" element={<Transactions/>} />
         <Route path="*" element={<NotFound />} />
 
         {/* admin pages */}

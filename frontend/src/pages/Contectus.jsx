@@ -31,7 +31,7 @@ export default function ContactUs() {
         {/* LEFT IMAGE */}
         <div className="relative rounded-3xl overflow-hidden shadow-lg">
           <img
-            src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d"
+            src="https://cdni.iconscout.com/illustration/premium/thumb/contact-us-illustration-svg-download-png-4849052.png?f=webp"
             alt="office"
             className="w-full h-full object-cover"
           />
