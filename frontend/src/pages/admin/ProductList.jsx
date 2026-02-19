@@ -1,40 +1,47 @@
 import { useEffect, useState } from "react"
 import api from "@/api/axios"
 import { Pencil, Trash2 } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useOutletContext } from "react-router-dom"
 
 const API_URL = import.meta.env.VITE_API_URL
 
 const ProductList = () => {
   const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
   const navigate = useNavigate()
+  const { search } = useOutletContext()
 
-  // ✅ GET PRODUCTS
   useEffect(() => {
     api.get("/api/products")
-      .then((res) => setProducts(res.data))
-      .catch((err) => console.error(err))
+      .then(res => setProducts(res.data))
+      .catch(() => setError("Failed to load products"))
+      .finally(() => setLoading(false))
   }, [])
 
-  // ✅ DELETE PRODUCT
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return
-
+    if (!window.confirm("Delete this product?")) return
     try {
       await api.delete(`/api/products/${id}`)
-      setProducts(products.filter((p) => p._id !== id))
-    } catch (err) {
+      setProducts(products.filter(p => p._id !== id))
+    } catch {
       alert("Delete failed")
     }
   }
 
-  // ✅ EDIT PRODUCT
   const handleEdit = (id) => {
     navigate(`/admin/edit-product/${id}`)
   }
 
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  )
+
+  if (loading) return <p className="text-gray-500">Loading products...</p>
+  if (error) return <p className="text-red-500">{error}</p>
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div>
       <h2 className="text-2xl font-bold mb-6">All Products</h2>
 
       <div className="overflow-x-auto bg-white rounded-xl shadow">
@@ -51,7 +58,15 @@ const ProductList = () => {
           </thead>
 
           <tbody>
-            {products.map((p) => (
+            {filteredProducts.length === 0 && (
+              <tr>
+                <td colSpan="6" className="p-6 text-center text-gray-500">
+                  No products found
+                </td>
+              </tr>
+            )}
+
+            {filteredProducts.map(p => (
               <tr key={p._id} className="border-b hover:bg-gray-50">
                 <td className="p-3">{p.name}</td>
                 <td className="p-3">₹{p.price}</td>
@@ -64,21 +79,17 @@ const ProductList = () => {
                   />
                 </td>
                 <td className="p-3">
-                  <div className="flex items-center gap-3">
-                    {/* EDIT */}
+                  <div className="flex gap-3">
                     <button
                       onClick={() => handleEdit(p._id)}
-                      className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition"
-                      title="Edit Product"
+                      className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white"
                     >
                       <Pencil size={16} />
                     </button>
 
-                    {/* DELETE */}
                     <button
                       onClick={() => handleDelete(p._id)}
-                      className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition"
-                      title="Delete Product"
+                      className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
                     >
                       <Trash2 size={16} />
                     </button>
